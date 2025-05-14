@@ -21,12 +21,7 @@ export class CreateAdminDto {
     @IsPhoneNumber('UZ')
     @IsNotEmpty()
     phone_number: string;
-    
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    tg_link: string;
-    
+        
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
