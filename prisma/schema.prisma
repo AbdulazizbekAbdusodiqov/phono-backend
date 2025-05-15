@@ -46,6 +46,10 @@ model User {
   phone_number         PhoneNumber[]
   email                Email[]
   payment              Payment[]
+  product              Product[]
+  otp                  Otp[]
+  // sentMessages         Message[]     @relation("MessageSender")
+  // receivedMessages     Message[]     @relation("MessageReceiver")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -79,18 +83,19 @@ model District {
 }
 
 model Address {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   user_id     Int
   name        String
   lat         String
   long        String
-  is_main     Boolean  @default(false)
+  is_main     Boolean   @default(false)
   region_id   Int
   district_id Int
   address     String
-  user        User     @relation(fields: [user_id], references: [id])
-  region      Region   @relation(fields: [region_id], references: [id])
-  district    District @relation(fields: [district_id], references: [id])
+  user        User      @relation(fields: [user_id], references: [id])
+  region      Region    @relation(fields: [region_id], references: [id])
+  district    District  @relation(fields: [district_id], references: [id])
+  product     Product[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -99,9 +104,10 @@ model Address {
 }
 
 model Brand {
-  id    Int     @id @default(autoincrement())
-  name  String  @unique
-  model Model[]
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  model   Model[]
+  product Product[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -110,10 +116,11 @@ model Brand {
 }
 
 model Model {
-  id       Int    @id @default(autoincrement())
-  name     String @unique
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
   brand_id Int
-  brand    Brand  @relation(fields: [brand_id], references: [id])
+  brand    Brand     @relation(fields: [brand_id], references: [id])
+  product  Product[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -122,8 +129,9 @@ model Model {
 }
 
 model Color {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  product Product[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -135,6 +143,7 @@ model Currency {
   id      Int       @id @default(autoincrement())
   name    String    @unique
   payment Payment[]
+  product Product[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -192,3 +201,69 @@ model Payment {
 
   @@map("payment")
 }
+
+model Product {
+  id            Int            @id @default(autoincrement())
+  title         String
+  storage       Int
+  ram           Int
+  user_id       Int
+  brand_id      Int
+  model_id      Int?
+  other_model   String?
+  color_id      Int?
+  price         Decimal
+  currency_id   Int
+  description   String
+  year          String
+  negotiable    Boolean
+  condition     Boolean
+  has_document  Boolean
+  phone_number  String
+  address_id    Int
+  is_top        Boolean        @default(false)
+  is_checked    Boolean        @default(false)
+  is_active     Boolean        @default(true)
+  is_deleted    Boolean        @default(false)
+  view_count    Int            @default(0)
+  like_count    Int            @default(0)
+  user          User           @relation(fields: [user_id], references: [id])
+  brand         Brand          @relation(fields: [brand_id], references: [id])
+  model         Model?         @relation(fields: [model_id], references: [id])
+  color         Color?         @relation(fields: [color_id], references: [id])
+  currency      Currency       @relation(fields: [currency_id], references: [id])
+  address       Address        @relation(fields: [address_id], references: [id])
+  product_image ProductImage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("product")
+}
+
+model ProductImage {
+  id         Int     @id @default(autoincrement())
+  url        String
+  product_id Int
+  product    Product @relation(fields: [product_id], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("product_image")
+}
+
+model Otp {
+  id           Int      @id @default(autoincrement())
+  phone_number String
+  code         String
+  user_id      Int
+  user         User     @relation(fields: [user_id], references: [id])
+  expired_time DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("otp")
+}
+
