@@ -23,7 +23,6 @@ async function start() {
     });
     const config = new DocumentBuilder()
     .setTitle("api.phono.uz")
-    // .setDescription("maqtash shart emas bilaman zo'r chiqan")
     .setVersion("v-01")
     .addBearerAuth(
       {
