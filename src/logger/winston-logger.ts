@@ -5,12 +5,8 @@ export const winstonConfig = {
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
-        // winston.format.label({ label: "Uz-Invest" }),
         winston.format.timestamp(),
-        nestWinstonModuleUtilitiee.format.nestLike("Uz-Invest")
-        // winston.format.printf(({ level, message, label, timestamp }) => {
-        //   return `${timestamp} [${label}] ${level}: ${message}`;
-        // })
+        nestWinstonModuleUtilitiee.format.nestLike("Phono")
       ),
     }),
     new winston.transports.File({
@@ -18,7 +14,6 @@ export const winstonConfig = {
       level: "info",
 
       format: winston.format.combine(
-        winston.format.label({ label: "Uz-Invest" }),
         winston.format.timestamp(),
         winston.format.json()
       ),
@@ -27,8 +22,7 @@ export const winstonConfig = {
       filename: "error.log",
       level: "error",
       format: winston.format.combine(
-        winston.format.label({ label: "Uz-Invest" }),
-
+        winston.format.label({ label: "Phono" }),
         winston.format.timestamp(),
         winston.format.json()
       ),
