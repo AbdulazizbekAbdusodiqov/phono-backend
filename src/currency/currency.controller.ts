@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { CurrencyService } from './currency.service';
 import { CreateCurrencyDto } from './dto/create-currency.dto';
 import { UpdateCurrencyDto } from './dto/update-currency.dto';
@@ -22,7 +22,7 @@ export class CurrencyController {
     return this.currencyService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateCurrencyDto: UpdateCurrencyDto) {
     return this.currencyService.update(+id, updateCurrencyDto);
   }

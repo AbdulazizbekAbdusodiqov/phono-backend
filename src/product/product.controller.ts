@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFiles, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFiles, BadRequestException, InternalServerErrorException, Put } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { AdminGuard } from '../guards/admin.guard';
@@ -82,7 +82,7 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: "productni yangilash" })
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(+id, updateProductDto);
   }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { DistrictService } from './district.service';
 import { CreateDistrictDto } from './dto/create-district.dto';
 import { UpdateDistrictDto } from './dto/update-district.dto';
@@ -22,7 +22,7 @@ export class DistrictController {
     return this.districtService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateDistrictDto: UpdateDistrictDto) {
     return this.districtService.update(+id, updateDistrictDto);
   }
