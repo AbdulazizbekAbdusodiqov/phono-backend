@@ -20,11 +20,11 @@ export class CreateProductDto {
   @Type(() => Number)
   ram: number;
 
-  // @ApiProperty({required:false})
-  // @IsNumber()
-  // @IsOptional()
-  // @Type(() => Number)
-  // user_id?: number;
+  @ApiProperty({required:false})
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  user_id?: number;
 
   @ApiProperty()
   @IsNumber()
@@ -32,16 +32,16 @@ export class CreateProductDto {
   @Type(() => Number)
   brand_id: number;
 
-  // @ApiProperty({required:false})
-  // @IsOptional()
-  // @IsNumber()
-  // @Type(() => Number)
-  // model_id?: number;
+  @ApiProperty({required:false})
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  model_id?: number;
 
-  @ApiProperty()//{required:false}
+  @ApiProperty({required:false})
   @IsOptional()
   @IsString()
-  other_model: string;
+  other_model?: string;
 
   @ApiProperty()
   @IsNumber()
@@ -94,11 +94,11 @@ export class CreateProductDto {
   @IsNotEmpty()
   phone_number: string;
 
-  // @ApiProperty({required:false})
-  // @IsNumber()
-  // @IsOptional()
-  // @Type(() => Number)
-  // address_id?: number;
+  @ApiProperty({required:false})
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  address_id?: number;
 
   @ApiProperty({
     type: "array",
