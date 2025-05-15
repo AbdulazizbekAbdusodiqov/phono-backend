@@ -16,8 +16,8 @@ export class BrandService
         where: { name: createBrandDto.name },
       }
     );
-
-    if (existingBrand) throw new BadRequestException(`"${createBrandDto.name}" nomli brend allaqachon mavjud!`);
+    
+    if (existingBrand) throw new BadRequestException(`${createBrandDto.name} nomli brend allaqachon mavjud!`);
 
     return this.prismaService.brand.create
     (

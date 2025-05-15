@@ -20,7 +20,7 @@ export class CurrencyService
       }
     );
 
-    if (existingCurrency) throw new BadRequestException(`"${createCurrencyDto.name}" bunaqa nomli valyuta allaqachon mavjud!`);
+    if (existingCurrency) throw new BadRequestException(`${createCurrencyDto.name} bunaqa nomli valyuta allaqachon mavjud!`);
 
     return this.prismaService.currency.create
     (

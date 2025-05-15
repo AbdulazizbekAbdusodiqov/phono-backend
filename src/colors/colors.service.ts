@@ -20,7 +20,7 @@ export class ColorsService
       }
     );
 
-    if (existingColor) throw new BadRequestException(`"${createColorDto.name}" nomli rang allaqachon mavjud!`);
+    if (existingColor) throw new BadRequestException(`${createColorDto.name} nomli rang allaqachon mavjud!`);
 
     return this.prismaService.color.create
     (

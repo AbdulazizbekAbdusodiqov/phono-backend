@@ -20,7 +20,7 @@ export class DistrictService
     }
   );
 
-  if (existingDistrict) throw new BadRequestException(`"${createDistrictDto.name}" nomli tuman allaqachon mavjud!`);
+  if (existingDistrict) throw new BadRequestException(`${createDistrictDto.name} nomli tuman allaqachon mavjud!`);
   
   return this.prismaService.district.create
   (

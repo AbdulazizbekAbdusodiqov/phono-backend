@@ -20,7 +20,7 @@ export class ModelService
       }
     );
 
-    if (existingModel) throw new BadRequestException(`"${createModelDto.name}" nomli model allaqachon mavjud!`);
+    if (existingModel) throw new BadRequestException(`${createModelDto.name} nomli model allaqachon mavjud!`);
     
     return this.prismaService.model.create
     (

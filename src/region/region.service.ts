@@ -22,7 +22,7 @@ export class RegionService
 
     if (existingRegion) 
     {
-      throw new BadRequestException(`"${createRegionDto.name}" nomli region allaqachon mavjud!`);
+      throw new BadRequestException(`${createRegionDto.name} nomli region allaqachon mavjud!`);
     }
 
     return this.prismaService.region.create
