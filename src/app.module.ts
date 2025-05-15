@@ -9,6 +9,7 @@ import { BrandModule } from './brand/brand.module';
 import { ModelModule } from './model/model.module';
 import { ColorsModule } from './colors/colors.module';
 import { CurrencyModule } from './currency/currency.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CurrencyModule } from './currency/currency.module';
     ModelModule,
     ColorsModule,
     CurrencyModule
+    ProductModule
   ],
   controllers: [],
   providers: [],

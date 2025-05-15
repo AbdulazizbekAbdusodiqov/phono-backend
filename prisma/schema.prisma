@@ -212,7 +212,7 @@ model Product {
   brand_id      Int
   model_id      Int?
   other_model   String?
-  color_id      Int?
+  color_id      Int
   price         Decimal
   currency_id   Int
   description   String
