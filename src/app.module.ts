@@ -23,7 +23,7 @@ import { ProductModule } from './product/product.module';
     ModelModule,
     ColorsModule,
     CurrencyModule,
-    ProductModule
+    ProductModule,
   ],
   controllers: [],
   providers: [],

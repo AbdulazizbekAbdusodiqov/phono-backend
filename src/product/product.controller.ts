@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFiles, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { AdminGuard } from '../guards/admin.guard';
 import { ProductService } from './product.service';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation } from '@nestjs/swagger';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from '../config/multer.config';
+
 
 @Controller('product')
 export class ProductController {
@@ -11,8 +14,26 @@ export class ProductController {
 
   @ApiOperation({ summary: "Yangi product qo'shish" })
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+  @ApiConsumes("multipart/form-data")
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: "images", maxCount: 10 }], multerOptions)
+  )
+  async create(
+    @UploadedFiles()
+    files: {
+      images?: Express.Multer.File[];
+    },
+    @Body() createProductDto: CreateProductDto
+  ) {
+    try {
+      return await this.productService.create(createProductDto, files);
+    } catch (error) {
+      // Handle Prisma foreign key constraint errors
+      if (error.code === 'P2003') {
+        throw new BadRequestException(`Foreign key constraint failed: ${error.meta?.field || 'Unknown field'}`);
+      }
+      throw new InternalServerErrorException(error.message || 'An unexpected error occurred');
+    }
   }
 
   @ApiOperation({ summary: "productlarni ko'rish" })
