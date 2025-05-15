@@ -203,6 +203,13 @@ model Payment {
   @@map("payment")
 }
 
+
+enum isChecked {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Product {
   id            Int            @id @default(autoincrement())
   title         String
@@ -223,7 +230,7 @@ model Product {
   phone_number  String
   address_id    Int
   is_top        Boolean        @default(false)
-  is_checked    Boolean        @default(false)
+  is_checked    isChecked      @default(PENDING)
   is_active     Boolean        @default(true)
   is_deleted    Boolean        @default(false)
   view_count    Int            @default(0)
