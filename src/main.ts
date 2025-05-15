@@ -46,6 +46,7 @@ async function start() {
 
       .build()
 
+
     app.setGlobalPrefix("api")
     app.useStaticAssets(join(__dirname, '..', 'public', 'uploads'), {
       prefix: '/api/uploads/',
