@@ -20,7 +20,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    this.logger.error(`Status: ${status} Error: ${exception}`);
+    // this.logger.error(`Status: ${status} Error: ${exception}`);
 
     response.status(status).json({
       statusCode: status,
