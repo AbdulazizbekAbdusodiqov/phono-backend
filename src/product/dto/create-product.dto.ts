@@ -109,5 +109,4 @@ export class CreateProductDto {
   })
   @IsOptional()
   images?: Express.Multer.File[];
-
 }

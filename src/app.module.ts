@@ -10,6 +10,10 @@ import { ModelModule } from './model/model.module';
 import { ColorsModule } from './colors/colors.module';
 import { CurrencyModule } from './currency/currency.module';
 import { ProductModule } from './product/product.module';
+import { EmailModule } from './email/email.module';
+import { PhoneNumberModule } from './phone_number/phone_number.module';
+import { PaymentModule } from './payment/payment.module';
+import { PaymentMethodModule } from './payment_method/payment_method.module';
 
 @Module({
   imports: [
@@ -24,6 +28,10 @@ import { ProductModule } from './product/product.module';
     ColorsModule,
     CurrencyModule,
     ProductModule,
+    EmailModule,
+    PhoneNumberModule,
+    PaymentModule,
+    PaymentMethodModule,
   ],
   controllers: [],
   providers: [],

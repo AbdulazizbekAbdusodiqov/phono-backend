@@ -4,8 +4,7 @@ import { UpdateDistrictDto } from './dto/update-district.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class DistrictService 
-{
+export class DistrictService {
   constructor(private readonly prismaService: PrismaService) {}
 
  async create(createDistrictDto: CreateDistrictDto) 
