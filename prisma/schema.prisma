@@ -35,35 +35,20 @@ model User {
   is_active            Boolean   @default(true)
   is_premium           Boolean   @default(false)
   hashed_refresh_token String?
-<<<<<<< HEAD
   last_online          DateTime  @default(now())
   balance              Decimal   @default(0)
 
   address       Address[]
   phone_number  PhoneNumber[]
-  email         Email[]
   payment       Payment[]
   product       Product[]
   senderChats   Chat[]        @relation("senderChats")
   receiverChats Chat[]        @relation("receiverChats")
   messages      Message[]
-=======
-  last_online          DateTime      @default(now())
-  balance              Decimal       @default(0)
-  slug                 String?        @unique
-  address              Address[]
-  phone_number         PhoneNumber[]
-  email                Email[]
-  payment              Payment[]
-  product              Product[]
-  otp                  Otp[]
-  senderChats          Chat[]        @relation("senderChats")
-  receiverChats        Chat[]        @relation("receiverChats")
-  messages             Message[]
->>>>>>> 5d97a92f0d0d404506c832b88943855c773adbe8
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  slug          String?       @unique
+  email         Email[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   @@map("user")
 }
@@ -104,8 +89,8 @@ model Address {
   district_id Int?
   address     String
   user        User      @relation(fields: [user_id], references: [id])
-  region      Region?    @relation(fields: [region_id], references: [id])
-  district    District?  @relation(fields: [district_id], references: [id])
+  region      Region?   @relation(fields: [region_id], references: [id])
+  district    District? @relation(fields: [district_id], references: [id])
   product     Product[]
 
   createdAt DateTime @default(now())
@@ -214,7 +199,6 @@ model Payment {
   @@map("payment")
 }
 
-
 enum isChecked {
   PENDING
   APPROVED
@@ -247,12 +231,12 @@ model Product {
   is_deleted    Boolean        @default(false)
   view_count    Int            @default(0)
   like_count    Int            @default(0)
-  user          User?           @relation(fields: [user_id], references: [id])
+  user          User?          @relation(fields: [user_id], references: [id])
   brand         Brand          @relation(fields: [brand_id], references: [id])
   model         Model?         @relation(fields: [model_id], references: [id])
   color         Color?         @relation(fields: [color_id], references: [id])
   currency      Currency       @relation(fields: [currency_id], references: [id])
-  address       Address?        @relation(fields: [address_id], references: [id])
+  address       Address?       @relation(fields: [address_id], references: [id])
   product_image ProductImage[]
 
   createdAt DateTime @default(now())
