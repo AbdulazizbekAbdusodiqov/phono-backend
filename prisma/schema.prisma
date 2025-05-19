@@ -35,6 +35,7 @@ model User {
   is_active            Boolean   @default(true)
   is_premium           Boolean   @default(false)
   hashed_refresh_token String?
+<<<<<<< HEAD
   last_online          DateTime  @default(now())
   balance              Decimal   @default(0)
 
@@ -46,6 +47,20 @@ model User {
   senderChats   Chat[]        @relation("senderChats")
   receiverChats Chat[]        @relation("receiverChats")
   messages      Message[]
+=======
+  last_online          DateTime      @default(now())
+  balance              Decimal       @default(0)
+  slug                 String?        @unique
+  address              Address[]
+  phone_number         PhoneNumber[]
+  email                Email[]
+  payment              Payment[]
+  product              Product[]
+  otp                  Otp[]
+  senderChats          Chat[]        @relation("senderChats")
+  receiverChats        Chat[]        @relation("receiverChats")
+  messages             Message[]
+>>>>>>> 5d97a92f0d0d404506c832b88943855c773adbe8
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -199,16 +214,23 @@ model Payment {
   @@map("payment")
 }
 
+
+enum isChecked {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Product {
   id            Int            @id @default(autoincrement())
   title         String
   storage       Int
   ram           Int
-  user_id       Int
+  user_id       Int?
   brand_id      Int
   model_id      Int?
   other_model   String?
-  color_id      Int?
+  color_id      Int
   price         Decimal
   currency_id   Int
   description   String
@@ -217,19 +239,20 @@ model Product {
   condition     Boolean
   has_document  Boolean
   phone_number  String
-  address_id    Int
+  address_id    Int?
+  slug          String?        @unique
   is_top        Boolean        @default(false)
-  is_checked    Boolean        @default(false)
+  is_checked    isChecked      @default(PENDING)
   is_active     Boolean        @default(true)
   is_deleted    Boolean        @default(false)
   view_count    Int            @default(0)
   like_count    Int            @default(0)
-  user          User           @relation(fields: [user_id], references: [id])
+  user          User?           @relation(fields: [user_id], references: [id])
   brand         Brand          @relation(fields: [brand_id], references: [id])
   model         Model?         @relation(fields: [model_id], references: [id])
   color         Color?         @relation(fields: [color_id], references: [id])
   currency      Currency       @relation(fields: [currency_id], references: [id])
-  address       Address        @relation(fields: [address_id], references: [id])
+  address       Address?        @relation(fields: [address_id], references: [id])
   product_image ProductImage[]
 
   createdAt DateTime @default(now())
