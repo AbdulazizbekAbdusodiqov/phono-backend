@@ -18,6 +18,8 @@ import { EmailModule } from "./email/email.module";
 import { PhoneNumberModule } from "./phone_number/phone_number.module";
 import { PaymentModule } from "./payment/payment.module";
 import { PaymentMethodModule } from "./payment_method/payment_method.module";
+import { ChatModule } from './chat/chat.module';
+
 
 @Module({
   imports: [
@@ -40,6 +42,7 @@ import { PaymentMethodModule } from "./payment_method/payment_method.module";
     PhoneNumberModule,
     PaymentModule,
     PaymentMethodModule,
+    ChatModule
   ],
   controllers: [],
   providers: [],

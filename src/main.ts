@@ -10,12 +10,12 @@ import { join } from "path";
 import * as bodyParser from "body-parser";
 import { NestExpressApplication } from "@nestjs/platform-express";
 
+
 async function start() {
   try {
     const PORT = process.env.PORT || 3030;
-
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-      logger: WinstonModule.createLogger(winstonConfig),
+      logger: WinstonModule.createLogger(winstonConfig)
     });
 
     app.use(cookieParser());
@@ -34,7 +34,7 @@ async function start() {
       methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
       credentials: true,
     });
-
+    app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads/' });
     const config = new DocumentBuilder()
       .setTitle("api.phono.uz")
       .setVersion("v-01")

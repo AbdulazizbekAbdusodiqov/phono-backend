@@ -29,11 +29,11 @@ model User {
   id                   Int       @id @default(autoincrement())
   first_name           String
   last_name            String
-  brith_date           DateTime?
   password             String
   profile_img          String?
   is_active            Boolean   @default(true)
   is_premium           Boolean   @default(false)
+  birth_date           DateTime?
   hashed_refresh_token String?
   last_online          DateTime  @default(now())
   balance              Decimal   @default(0)
@@ -273,8 +273,8 @@ model Otp {
 
 model Chat {
   id       Int  @id @default(autoincrement())
-  sender   User @relation("senderChats", fields: [senderId], references: [id])
   senderId Int
+  sender   User @relation("senderChats", fields: [senderId], references: [id])
 
   receiver   User @relation("receiverChats", fields: [receiverId], references: [id])
   receiverId Int
@@ -286,14 +286,22 @@ model Chat {
   @@unique([senderId, receiverId])
 }
 
-model Message {
-  id       Int    @id @default(autoincrement())
-  text     String
-  sender   User   @relation(fields: [senderId], references: [id])
-  senderId Int
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  FILE
+}
 
-  chat   Chat @relation(fields: [chatId], references: [id])
+model Message {
+  id        Int         @id @default(autoincrement())
+  type      MessageType
+  content     String
+  senderId Int
+  sender   User   @relation(fields: [senderId], references: [id])
+
   chatId Int
+  chat   Chat @relation(fields: [chatId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
