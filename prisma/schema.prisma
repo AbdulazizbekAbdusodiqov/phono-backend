@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -32,29 +26,29 @@ model Admin {
 }
 
 model User {
-  id                   Int           @id @default(autoincrement())
+  id                   Int       @id @default(autoincrement())
   first_name           String
   last_name            String
-  brith_date           DateTime
-  profile_img          String
-  is_active            Boolean       @default(true)
-  is_premium           Boolean       @default(false)
+  brith_date           DateTime?
+  password             String
+  profile_img          String?
+  is_active            Boolean   @default(true)
+  is_premium           Boolean   @default(false)
   hashed_refresh_token String?
-  last_online          DateTime      @default(now())
-  balance              Decimal       @default(0)
-  slug                 String?        @unique
-  address              Address[]
-  phone_number         PhoneNumber[]
-  email                Email[]
-  payment              Payment[]
-  product              Product[]
-  otp                  Otp[]
-  senderChats          Chat[]        @relation("senderChats")
-  receiverChats        Chat[]        @relation("receiverChats")
-  messages             Message[]
+  last_online          DateTime  @default(now())
+  balance              Decimal   @default(0)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  address       Address[]
+  phone_number  PhoneNumber[]
+  payment       Payment[]
+  product       Product[]
+  senderChats   Chat[]        @relation("senderChats")
+  receiverChats Chat[]        @relation("receiverChats")
+  messages      Message[]
+  slug          String?       @unique
+  email         Email[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   @@map("user")
 }
@@ -88,15 +82,15 @@ model Address {
   id          Int       @id @default(autoincrement())
   user_id     Int
   name        String
-  lat         String
-  long        String
+  lat         String?
+  long        String?
   is_main     Boolean   @default(false)
-  region_id   Int
-  district_id Int
+  region_id   Int?
+  district_id Int?
   address     String
   user        User      @relation(fields: [user_id], references: [id])
-  region      Region    @relation(fields: [region_id], references: [id])
-  district    District  @relation(fields: [district_id], references: [id])
+  region      Region?   @relation(fields: [region_id], references: [id])
+  district    District? @relation(fields: [district_id], references: [id])
   product     Product[]
 
   createdAt DateTime @default(now())
@@ -156,9 +150,10 @@ model Currency {
 model PhoneNumber {
   id           Int     @id @default(autoincrement())
   phone_number String  @unique
-  user_id      Int
   is_main      Boolean @default(false)
-  user         User    @relation(fields: [user_id], references: [id])
+
+  user_id Int
+  user    User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -204,7 +199,6 @@ model Payment {
   @@map("payment")
 }
 
-
 enum isChecked {
   PENDING
   APPROVED
@@ -237,12 +231,12 @@ model Product {
   is_deleted    Boolean        @default(false)
   view_count    Int            @default(0)
   like_count    Int            @default(0)
-  user          User?           @relation(fields: [user_id], references: [id])
+  user          User?          @relation(fields: [user_id], references: [id])
   brand         Brand          @relation(fields: [brand_id], references: [id])
   model         Model?         @relation(fields: [model_id], references: [id])
   color         Color?         @relation(fields: [color_id], references: [id])
   currency      Currency       @relation(fields: [currency_id], references: [id])
-  address       Address?        @relation(fields: [address_id], references: [id])
+  address       Address?       @relation(fields: [address_id], references: [id])
   product_image ProductImage[]
 
   createdAt DateTime @default(now())
@@ -265,11 +259,11 @@ model ProductImage {
 
 model Otp {
   id           Int      @id @default(autoincrement())
-  phone_number String
   code         String
-  user_id      Int
-  user         User     @relation(fields: [user_id], references: [id])
+  is_used      Boolean  @default(false)
   expired_time DateTime
+
+  phone_number String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
