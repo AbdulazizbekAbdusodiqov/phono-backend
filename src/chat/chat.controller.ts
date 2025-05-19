@@ -2,26 +2,26 @@ import { Controller, Post, Body, Get, UseGuards, Req, UseInterceptors, UploadedF
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { WsJwtGuard } from '../guards/ws-jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('chat')
 export class ChatController {
   constructor(private chatService: ChatService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(WsJwtGuard)
   @Post()
   async createChat(@Body() createChatDto: CreateChatDto, @Req() req) {
     return this.chatService.createChat(createChatDto, req.user.userId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(WsJwtGuard)
   @Get()
   async getUserChats(@Req() req) {
     return this.chatService.getUserChats(req.user.userId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(WsJwtGuard)
   @Post('message')
   @UseInterceptors(FileInterceptor('file'))
   async createMessage(

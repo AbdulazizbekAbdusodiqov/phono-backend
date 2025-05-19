@@ -3,7 +3,6 @@ import { ChatService } from './chat.service';
 import { ChatController } from './chat.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ChatGateway } from './chat.gateway';
-import { AuthModule } from '../auth/auth.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -11,7 +10,6 @@ import { extname } from 'path';
 @Module({
   imports: [
     PrismaModule,
-    AuthModule,
     MulterModule.register({
       storage: diskStorage({
         destination: './uploads',
