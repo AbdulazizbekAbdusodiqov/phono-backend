@@ -17,7 +17,7 @@ import { PaymentMethodModule } from './payment_method/payment_method.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
+    ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     PrismaModule,
     AuthModule,
     AdminModule,
