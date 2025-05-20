@@ -73,7 +73,6 @@ export class PaymentService {
 
   async update(id: number, updatePaymentDto: UpdatePaymentDto) {
 
-  update(id: number, updatePaymentDto: UpdatePaymentDto) {
     return this.prismaService.payment.update({
       where: { id },
       data: { ...updatePaymentDto, updatedAt: new Date() },

@@ -59,6 +59,7 @@ export class OtpService {
       timeStamp: now,
       otp_id: createdOtp.id,
       phone_number,
+      is_used:false
     };
 
     const encodedData = await encode(JSON.stringify(details));
