@@ -172,6 +172,21 @@ export class ProductService {
     });
   }
 
+  async createProductImage(id:number, image:Express.Multer.File){
+    return await this.prisma.productImage.create({
+      data: {
+        product_id: id,
+        url: image.path.split('public/')[1]
+      }
+    });
+  }
+
+  async deleteProductImage(id:number){
+    return await this.prisma.productImage.delete({
+      where: { id },
+    });
+  }
+
   async update(id: number, updateProductDto: UpdateProductDto) {
     return await this.prisma.product.update({
       where: { id, is_deleted: false },
