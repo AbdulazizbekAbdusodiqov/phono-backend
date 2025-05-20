@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -6,12 +6,59 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class PaymentService {
   constructor(private readonly prismaService: PrismaService) {}
-  create(createPaymentDto: CreatePaymentDto) {
-    return this.prismaService.payment.create({ data: createPaymentDto });
+  async create(createPaymentDto: CreatePaymentDto) {
+    const {amount, currency_id, payment_method_id, user_id} = createPaymentDto
+    const user = this.prismaService.user.findUnique({where: {id: user_id}})
+    if(!user){
+      throw new NotFoundException({status: 404, message: `Not found User who has got ID: ${user_id}`})
+    }
+    const payment_method = await this.prismaService.payment.findFirst({where: {id: payment_method_id}})
+    if(!payment_method){
+      throw new NotFoundException({status: 404, message: "Not found Payment Method"})
+    }
+    const currency = await this.prismaService.currency.findFirst({
+      where: { id: currency_id },
+    });
+    if (!currency) {
+      throw new NotFoundException({
+        status: 404,
+        message: 'Not found this Currency',
+      });
+    }
+    if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
+      throw new Error('Amount must be a positive number');
+    }
+
+    const duplicate = await this.prismaService.payment.findFirst({
+      where: {
+        user_id: user_id,
+        payment_method_id: payment_method_id,
+        amount: amount,
+        createdAt: {
+          gte: new Date(Date.now() - 2 * 60 * 1000),
+        },
+      },
+    });
+    if (duplicate) throw new ConflictException('already paid this payment');
+    
+    const newPayment = await this.prismaService.payment.create({ data: createPaymentDto });
+
+    return {
+      status: 200,
+      message: 'To‘lov muvaffaqiyatli yaratildi',
+      data: newPayment,
+    };
+
   }
 
-  findAll() {
-    return this.prismaService.payment.findMany();
+  async findAll() {
+    const result = await this.prismaService.payment.findMany();
+    if(result){
+      return result
+    }
+    return {
+      status: 404, message: "you don't have any payment"
+    }
   }
 
   async findOne(id: number) {
@@ -24,6 +71,8 @@ export class PaymentService {
     return payment;
   }
 
+  async update(id: number, updatePaymentDto: UpdatePaymentDto) {
+
   update(id: number, updatePaymentDto: UpdatePaymentDto) {
     return this.prismaService.payment.update({
       where: { id },
@@ -31,7 +80,7 @@ export class PaymentService {
     });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return this.prismaService.payment.delete({ where: { id } });
   }
 }

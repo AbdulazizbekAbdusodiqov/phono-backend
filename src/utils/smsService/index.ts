@@ -1,17 +1,17 @@
-import axios from "axios";
+import axios from 'axios';
 
 export class SmsService {
   static async sendSMS(phone_number: string, otp: string) {
     const data = new FormData();
-    data.append("mobile_phone", phone_number);
+    data.append('mobile_phone', phone_number);
     data.append(
-      "message",
-      `salom phono sizning tech akauntingizning paroli: ${otp}`
+      'message',
+      `salom phono sizning tech akauntingizning paroli: ${otp}`,
     );
-    data.append("from", "4546");
+    data.append('from', '4546');
 
     const config = {
-      method: "post",
+      method: 'post',
       maxBodyLength: Infinity,
       url: process.env.SMS_SERVICE_URL,
       headers: {
