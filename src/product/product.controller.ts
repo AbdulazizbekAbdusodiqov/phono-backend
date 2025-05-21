@@ -8,6 +8,7 @@ import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express
 import { multerOptions } from '../config/multer.config';
 import { UserGuard } from '../guards/user.guard';
 import { UserProductGuard } from '../guards/user-product.guard';
+import { UserSelfGuard } from '../guards/user-self.guard';
 
 
 @Controller('product')
@@ -54,6 +55,9 @@ export class ProductController {
 
   @ApiOperation({ summary: "Get user's products" })
   @Get('user/:id')
+  @ApiBearerAuth('phono') 
+  @UseGuards(UserSelfGuard)
+  @UseGuards(UserGuard)
   getProductByUserId(@Param('id') id: number) {
     return this.productService.getProductByUserId(+id);
   }
@@ -65,6 +69,7 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: "Get pending products" })
+  @ApiBearerAuth('phono') 
   @UseGuards(AdminGuard)
   @Get('pending')
   getPendingProducts() {
@@ -72,6 +77,7 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: "Approve product" })
+  @ApiBearerAuth('phono') 
   @UseGuards(AdminGuard)
   @Get('approved/:id')
   approveProduct(@Param('id') id: number) {
@@ -79,6 +85,7 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: "Reject product" })
+  @ApiBearerAuth('phono') 
   @UseGuards(AdminGuard)
   @Get('rejected/:id')
   rejectProduct(@Param('id') id: number) {
@@ -86,12 +93,18 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: "Update product" })
+  @ApiBearerAuth('phono') 
+  @UseGuards(UserProductGuard)
+  @UseGuards(UserGuard)
   @Put(':id')
   update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(+id, updateProductDto);
   }
   
   @ApiOperation({ summary: "Create product image" })
+  @ApiBearerAuth('phono') 
+  @UseGuards(UserProductGuard)
+  @UseGuards(UserGuard)
   @Post('image/:id')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
@@ -105,14 +118,17 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: "Delete product image" })
+  @ApiBearerAuth('phono') 
+  @UseGuards(UserProductGuard)
+  @UseGuards(UserGuard)
   @Delete('image/:id')
   deleteProductImage(@Param('id') id: number) {
     return this.productService.deleteProductImage(+id);
   }
   
   @ApiBearerAuth('phono') 
-  @UseGuards(UserGuard)
   @UseGuards(UserProductGuard)
+  @UseGuards(UserGuard)
   @ApiOperation({ summary: " Delete product" })
   @Delete(':id')
   remove(@Param('id') id: number) {
