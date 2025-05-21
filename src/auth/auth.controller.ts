@@ -16,6 +16,7 @@ import { ResponseFields } from "../types";
 import { CookieGetter } from "../decorators/cookie-getter.decorator";
 import { AdminSignInDto, CreateAdminDto } from "../admin/dto";
 import { AdminGuard } from "../guards/admin.guard";
+import { SuperAdminGuard } from "../guards/superAdmin.guard";
 // import { SuperAdminGuard } from '../guards/superAdmin.guard';
 
 @Controller("auth")
@@ -25,7 +26,7 @@ export class AuthController {
   //================================  For Admin ============================================
 
   @ApiOperation({ summary: "Register a new admin" })
-  // @UseGuards(AdminGuard, SuperAdminGuard)
+  @UseGuards(AdminGuard, SuperAdminGuard)
   @Post("admin/sign-up")
   signUpAdmin(@Body() createAdminDto: CreateAdminDto) {    
     return this.authService.adminSignUp(createAdminDto);
