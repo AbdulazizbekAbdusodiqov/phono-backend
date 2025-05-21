@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Put,
+  Query,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -43,6 +44,22 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Get("search")
+  @ApiOperation({
+    summary: "Search users by first name, last name, or phone number",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "List of matching users with pagination",
+  })
+  searchUsers(
+    @Query("query") query: string,
+    @Query("page") page: number = 1,
+    @Query("limit") limit: number = 10
+  ) {
+    return this.userService.searchUsers(query, page, limit);
+  }
+
   @Get(":id")
   @ApiOperation({ summary: "Get user by ID" })
   @ApiResponse({ status: 200, description: "User found" })
@@ -72,5 +89,13 @@ export class UserController {
   @ApiResponse({ status: 200, description: "User deleted successfully" })
   remove(@Param("id") id: string) {
     return this.userService.remove(+id);
+  }
+
+  @UseGuards(UserGuard, AdminGuard)
+  @Put(":id/block")
+  @ApiOperation({ summary: "Block user by ID" })
+  @ApiResponse({ status: 200, description: "User blocked successfully" })
+  blockUser(@Param("id") id: string) {
+    return this.userService.blockUserById(+id);
   }
 }
