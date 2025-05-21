@@ -4,7 +4,7 @@ import { CreateAdminDto, UpdateAdminDto } from './dto';
 import { AdminGuard } from '../guards/admin.guard';
 import { SuperAdminGuard } from '../guards/superAdmin.guard';
 import { AdminSelfGuard } from '../guards/admin-self.guard';
-import { ApiOperation, ApiProperty } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 
 @Controller('admin')
 export class AdminController {
@@ -15,6 +15,7 @@ export class AdminController {
   }
 
   @ApiOperation({summary: 'Retrieve all admins'})
+  @ApiBearerAuth('phono')   
   @UseGuards(AdminGuard, SuperAdminGuard)
   @Get()
   findAll() {
@@ -22,6 +23,7 @@ export class AdminController {
   }
   
   @ApiOperation({summary: 'Retrieve an admin by ID'})
+  @ApiBearerAuth('phono')   
   @UseGuards(AdminGuard, AdminSelfGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -29,6 +31,7 @@ export class AdminController {
   }
   
   @ApiOperation({summary: 'Update an admin by ID'})
+  @ApiBearerAuth('phono')   
   @UseGuards(AdminGuard, AdminSelfGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
@@ -36,6 +39,7 @@ export class AdminController {
   }
   
   @ApiOperation({summary: 'Delete an admin by ID'})
+  @ApiBearerAuth('phono')   
   @UseGuards(AdminGuard, SuperAdminGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {

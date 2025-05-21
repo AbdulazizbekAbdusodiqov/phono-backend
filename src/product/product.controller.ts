@@ -3,9 +3,11 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { AdminGuard } from '../guards/admin.guard';
 import { ProductService } from './product.service';
-import { ApiConsumes, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiOperation } from '@nestjs/swagger';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '../config/multer.config';
+import { UserGuard } from '../guards/user.guard';
+import { UserProductGuard } from '../guards/user-product.guard';
 
 
 @Controller('product')
@@ -13,6 +15,8 @@ export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
   @ApiOperation({ summary: "Create new product" })
+  @ApiBearerAuth('phono') 
+  @UseGuards(UserGuard)
   @Post()
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(
@@ -105,7 +109,10 @@ export class ProductController {
   deleteProductImage(@Param('id') id: number) {
     return this.productService.deleteProductImage(+id);
   }
-
+  
+  @ApiBearerAuth('phono') 
+  @UseGuards(UserGuard)
+  @UseGuards(UserProductGuard)
   @ApiOperation({ summary: " Delete product" })
   @Delete(':id')
   remove(@Param('id') id: number) {
