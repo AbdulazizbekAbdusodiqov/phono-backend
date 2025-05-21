@@ -132,4 +132,42 @@ export class UserService {
       data: { is_active: false },
     });
   }
+
+  async searchUsers(query: string, page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
+    const whereClause: any = {
+      OR: [
+        { first_name: { contains: query, mode: "insensitive" } },
+        { last_name: { contains: query, mode: "insensitive" } },
+        {
+          phone_number: {
+            some: {
+              phone_number: { contains: query, mode: "insensitive" },
+            },
+          },
+        },
+      ],
+    };
+
+    const [users, total] = await this.prisma.$transaction([
+      this.prisma.user.findMany({
+        where: whereClause,
+        include: { phone_number: true },
+        skip,
+        take: limit,
+      }),
+      this.prisma.user.count({ where: whereClause }),
+    ]);
+
+    return {
+      data: users,
+      meta: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    };
+  }
 }
