@@ -195,6 +195,7 @@ export class ProductService {
   }
 
   async remove(id: number) {
-    return await this.prisma.product.update({ where: { id, is_deleted: false }, data: { is_deleted: true } });
+    await this.prisma.product.update({ where: { id, is_deleted: false }, data: { is_deleted: true } });
+    return {message: "Product deleted successfully"}
   }
 }

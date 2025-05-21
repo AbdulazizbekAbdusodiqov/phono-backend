@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { Response } from "express";
 import { ResponseFields } from "../types";
 import { CookieGetter } from "../decorators/cookie-getter.decorator";
@@ -26,7 +26,8 @@ export class AuthController {
   //================================  For Admin ============================================
 
   @ApiOperation({ summary: "Register a new admin" })
-  @UseGuards(AdminGuard, SuperAdminGuard)
+  @ApiBearerAuth('phono')
+  @UseGuards(AdminGuard)
   @Post("admin/sign-up")
   signUpAdmin(@Body() createAdminDto: CreateAdminDto) {    
     return this.authService.adminSignUp(createAdminDto);
@@ -52,6 +53,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: "Refresh admin token" })
+  @ApiBearerAuth('phono')
   @UseGuards(AdminGuard)
   @Get("admin/:id/refresh")
   AdminRefresh(
@@ -63,6 +65,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: "Activate admin" })
+  @ApiBearerAuth('phono')
   @Get("admin/activate/:link")
   activateAdmin(@Param("link") link: string) {
     return this.authService.activateAdmin(link);
