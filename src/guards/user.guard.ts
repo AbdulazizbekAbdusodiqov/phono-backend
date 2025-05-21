@@ -17,8 +17,6 @@ export class UserGuard implements CanActivate {
     const req = context.switchToHttp().getRequest();
     const authHeader = req.headers.authorization;
 
-    console.log(req.headers);
-
     if (!authHeader) {
       throw new UnauthorizedException("Unauthorizard user");
     }
@@ -38,7 +36,6 @@ export class UserGuard implements CanActivate {
         console.log(error);
         throw new UnauthorizedException("Unauthorizard user");
       }
-      console.log(payload);
       if (!payload) {
         throw new UnauthorizedException("Unauthorizard user");
       }

@@ -16,8 +16,9 @@ export class AddressService {
     };
   }
 
-  findAll() {
+  findAll(user_id: number) {
     return this.prisma.address.findMany({
+      where: { user_id },
       include: { user: true, region: true, district: true },
     });
   }
