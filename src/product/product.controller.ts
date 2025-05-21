@@ -12,7 +12,7 @@ import { multerOptions } from '../config/multer.config';
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
-  @ApiOperation({ summary: "Yangi product qo'shish" })
+  @ApiOperation({ summary: "Create new product" })
   @Post()
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(
@@ -36,58 +36,58 @@ export class ProductController {
     }
   }
 
-  @ApiOperation({ summary: "productlarni ko'rish" })
+  @ApiOperation({ summary: "Get all products" })
   @Get()
   findAll() {
     return this.productService.findAll();
   }
 
-  @ApiOperation({ summary: "productni ko'rish" })
+  @ApiOperation({ summary: "Get product by id" })
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.productService.findOne(+id);
   }
 
-  @ApiOperation({ summary: "userning productlarini ko'rish" })
+  @ApiOperation({ summary: "Get user's products" })
   @Get('user/:id')
   getProductByUserId(@Param('id') id: number) {
     return this.productService.getProductByUserId(+id);
   }
 
-  @ApiOperation({ summary: "productlarni title bo'yicha qidirish (query param bilan)" })
+  @ApiOperation({ summary: "Get product by title (query param)" })
   @Get('search')
   getProductByTitleQuery(@Query('search') search: string) {
     return this.productService.getProductByTitleQuery(search);
   }
 
-  @ApiOperation({ summary: "pending productlarni ko'rish" })
+  @ApiOperation({ summary: "Get pending products" })
   @UseGuards(AdminGuard)
   @Get('pending')
   getPendingProducts() {
     return this.productService.getPendingProducts();
   }
 
-  @ApiOperation({ summary: "productni approved qilish" })
+  @ApiOperation({ summary: "Approve product" })
   @UseGuards(AdminGuard)
   @Get('approved/:id')
   approveProduct(@Param('id') id: number) {
     return this.productService.approvProduct(+id);
   }
 
-  @ApiOperation({ summary: "productni rejected qilish" })
+  @ApiOperation({ summary: "Reject product" })
   @UseGuards(AdminGuard)
   @Get('rejected/:id')
   rejectProduct(@Param('id') id: number) {
     return this.productService.rejectProduct(+id);
   }
 
-  @ApiOperation({ summary: "productni yangilash" })
+  @ApiOperation({ summary: "Update product" })
   @Put(':id')
   update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(+id, updateProductDto);
   }
   
-  @ApiOperation({ summary: "productni image qo'shish" })
+  @ApiOperation({ summary: "Create product image" })
   @Post('image/:id')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
@@ -100,13 +100,13 @@ export class ProductController {
     return this.productService.createProductImage(+id, image)
   }
 
-  @ApiOperation({ summary: "productni image o'chirish" })
+  @ApiOperation({ summary: "Delete product image" })
   @Delete('image/:id')
   deleteProductImage(@Param('id') id: number) {
     return this.productService.deleteProductImage(+id);
   }
 
-  @ApiOperation({ summary: "productni o'chirish" })
+  @ApiOperation({ summary: " Delete product" })
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.productService.remove(+id);
