@@ -19,7 +19,9 @@ export class AdminService {
 
     async create(createAdminDto: CreateAdminDto) {
         const { password, confirm_password, ...data } = createAdminDto;
-        if (password != confirm_password) {
+        console.log(password, confirm_password);
+        
+        if (password !== confirm_password) {
             throw new BadRequestException("Passwords did not match");
         }
         const activation_link = uuidv4();
