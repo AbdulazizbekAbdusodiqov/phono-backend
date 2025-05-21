@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { AddressService } from "./address.service";
 import { CreateAddressDto } from "./dto/create-address.dto";
@@ -16,13 +17,19 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from "@nestjs/swagger";
+import { UserGuard } from "../guards/user.guard";
+import { GetCurrentUserId } from "../decorators/get-current-user-id.decorator";
+import { UserSelfGuard } from "../guards/user-self.guard";
 
 @ApiTags("Address")
+@ApiBearerAuth("phono")
 @Controller("address")
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
+  @UseGuards(UserGuard)
   @Post()
   @ApiOperation({ summary: "Create a new address" })
   @ApiBody({ type: CreateAddressDto })
@@ -32,11 +39,12 @@ export class AddressController {
     return this.addressService.create(createAddressDto);
   }
 
+  @UseGuards(UserGuard)
   @Get()
   @ApiOperation({ summary: "Get all addresses" })
   @ApiResponse({ status: 200, description: "List of all addresses." })
-  findAll() {
-    return this.addressService.findAll();
+  findAll(@GetCurrentUserId() userId: number) {
+    return this.addressService.findAll(userId);
   }
 
   @Get(":id")
@@ -48,6 +56,7 @@ export class AddressController {
     return this.addressService.findOne(+id);
   }
 
+  @UseGuards(UserGuard, UserSelfGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Update an address by ID" })
   @ApiParam({ name: "id", type: Number, description: "Address ID" })
@@ -58,6 +67,7 @@ export class AddressController {
     return this.addressService.update(+id, updateAddressDto);
   }
 
+  @UseGuards(UserGuard, UserSelfGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Delete an address by ID" })
   @ApiParam({ name: "id", type: Number, description: "Address ID" })
