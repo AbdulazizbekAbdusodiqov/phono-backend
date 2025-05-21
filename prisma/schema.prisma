@@ -14,7 +14,7 @@ model Admin {
   email                String  @unique
   phone_number         String
   is_active            Boolean @default(false)
-  is_creator           Boolean @default(true)
+  is_creator           Boolean @default(false)
   activation_link      String  @unique
   hashed_password      String
   hashed_refresh_token String?

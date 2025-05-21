@@ -11,7 +11,7 @@ export class MailService {
     //     const url = `${process.env.API_URL}/api/auth/activate/${user.activation_link}`;
     //     await this.mailerService.sendMail({
     //         to: user.email,
-    //         subject: `UZ-INVESTga hush kelibsiz!`,
+    //         subject: `PHONO-TECHga hush kelibsiz!`,
     //         template: "./confirm",
     //         context: {
     //             name: `${user.first_name} ${user.last_name}`,
