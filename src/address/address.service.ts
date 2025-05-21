@@ -1,26 +1,55 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAddressDto } from './dto/create-address.dto';
-import { UpdateAddressDto } from './dto/update-address.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { CreateAddressDto } from "./dto/create-address.dto";
+import { UpdateAddressDto } from "./dto/update-address.dto";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class AddressService {
-  create(createAddressDto: CreateAddressDto) {
-    return 'This action adds a new address';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createAddressDto: CreateAddressDto) {
+    const data = await this.prisma.address.create({ data: createAddressDto });
+    return {
+      message: "Succefully created",
+      data,
+      status_code: 200,
+    };
   }
 
   findAll() {
-    return `This action returns all address`;
+    return this.prisma.address.findMany({
+      include: { user: true, region: true, district: true },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} address`;
+  async findOne(id: number) {
+    const address = await this.prisma.address.findUnique({
+      where: { id },
+      include: { user: true, region: true, district: true },
+    });
+
+    if (!address) {
+      throw new NotFoundException(`Address not found with this id ${id}`);
+    }
+    return { message: "", data: address, status_code: 200 };
   }
 
-  update(id: number, updateAddressDto: UpdateAddressDto) {
-    return `This action updates a #${id} address`;
+  async update(id: number, updateAddressDto: UpdateAddressDto) {
+    await this.findOne(id);
+    await this.prisma.address.update({ where: { id }, data: updateAddressDto });
+
+    return { message: "Succefullt updated", data: {}, status_code: 200 };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} address`;
+  async remove(id: number) {
+    await this.findOne(id);
+
+    await this.prisma.address.delete({ where: { id } });
+
+    return {
+      message: "Succesfully deleted",
+      status_code: 200,
+      data: {},
+    };
   }
 }
