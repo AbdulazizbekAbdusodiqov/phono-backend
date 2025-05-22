@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { CreateAdminDto, UpdateAdminDto } from './dto';
+import { CreateAdminDto, UpdateAdminDto, UpdateAdminPasswordDto } from './dto';
 import { AdminGuard } from '../guards/admin.guard';
 import { SuperAdminGuard } from '../guards/superAdmin.guard';
 import { AdminSelfGuard } from '../guards/admin-self.guard';
@@ -36,6 +36,14 @@ export class AdminController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
     return this.adminService.update(+id, updateAdminDto);
+  }
+  
+  @ApiOperation({summary: 'Update admin password by ID'})
+  @ApiBearerAuth('phono')   
+  @UseGuards(AdminGuard, AdminSelfGuard)
+  @Patch(':id')
+  updatePassword(@Param('id') id: string, @Body() UpdateAdminPasswordDto: UpdateAdminPasswordDto) {
+    return this.adminService.updatePassword(+id, UpdateAdminPasswordDto);
   }
   
   @ApiOperation({summary: 'Delete an admin by ID'})
