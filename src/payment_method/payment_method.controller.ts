@@ -7,11 +7,16 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { PaymentMethodService } from './payment_method.service';
 import { CreatePaymentMethodDto } from './dto/create-payment_method.dto';
 import { UpdatePaymentMethodDto } from './dto/update-payment_method.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AdminSelfGuard } from '../guards/admin-self.guard';
+import { AdminGuard } from '../guards/admin.guard';
+import { UserSelfGuard } from '../guards/user-self.guard';
+import { UserGuard } from '../guards/user.guard';
 
 @ApiTags('Payment Methods')
 @Controller('payment-methods')
@@ -25,10 +30,11 @@ export class PaymentMethodController {
   create(@Body() dto: CreatePaymentMethodDto) {
     return this.service.create(dto);
   }
-
+  
   @Get()
   @ApiOperation({ summary: 'Barcha to‘lov usullarini ko‘rish' })
   @ApiResponse({ status: 200, description: 'To‘lov usullari ro‘yxati' })
+  @UseGuards(AdminGuard, AdminSelfGuard)
   findAll() {
     return this.service.findAll();
   }
@@ -37,6 +43,7 @@ export class PaymentMethodController {
   @ApiOperation({ summary: 'ID orqali to‘lov usulini olish' })
   @ApiResponse({ status: 200, description: 'Topilgan to‘lov usuli' })
   @ApiResponse({ status: 404, description: 'To‘lov usuli topilmadi' })
+  @UseGuards(UserGuard, UserSelfGuard)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOne(id);
   }
@@ -46,6 +53,7 @@ export class PaymentMethodController {
   @ApiResponse({ status: 200, description: 'To‘lov usuli yangilandi' })
   @ApiResponse({ status: 400, description: 'Xato maʼlumot' })
   @ApiResponse({ status: 404, description: 'To‘lov usuli topilmadi' })
+  @UseGuards(UserGuard, UserSelfGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdatePaymentMethodDto,
@@ -57,6 +65,7 @@ export class PaymentMethodController {
   @ApiOperation({ summary: 'To‘lov usulini o‘chirish' })
   @ApiResponse({ status: 200, description: 'To‘lov usuli o‘chirildi' })
   @ApiResponse({ status: 404, description: 'To‘lov usuli topilmadi' })
+  @UseGuards(UserGuard, UserSelfGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.service.remove(id);
   }
