@@ -1,0 +1,65 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Chatroom {
+  createdAt: DateTime
+  id: ID
+  messages: [Message!]
+  name: String
+  updatedAt: DateTime
+  users: [User!]
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Message {
+  chatroom: Chatroom
+  content: String
+  createdAt: DateTime
+  id: ID
+  imageUrl: String
+  updatedAt: DateTime
+  user: User
+}
+
+type Mutation {
+  addUsersToChatroom(chatroomId: Float!, userIds: [Float!]!): Chatroom!
+  createChatroom(name: String!): Chatroom!
+  deleteChatroom(chatroomId: Float!): String!
+  enterChatroom(chatroomId: Float!): Boolean!
+  leaveChatroom(chatroomId: Float!): Boolean!
+  sendMessage(chatroomId: Float!, content: String!, image: Upload): Message!
+  userStartedTypingMutation(chatroomId: Float!): User!
+  userStoppedTypingMutation(chatroomId: Float!): User!
+}
+
+type Query {
+  getChatroomsForUser(userId: Float!): [Chatroom!]!
+  getMessagesForChatroom(chatroomId: Float!): [Message!]!
+}
+
+type Subscription {
+  liveUsersInChatroom(chatroomId: Float!): [User!]
+  newMessage(chatroomId: Float!): Message
+  userStartedTyping(chatroomId: Float!, userId: Float!): User
+  userStoppedTyping(chatroomId: Float!, userId: Float!): User
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+type User {
+  createdAt: DateTime
+  first_name: String!
+  id: Float
+  is_active: Boolean
+  last_name: String
+  last_online: DateTime
+  password: String
+  profile_img: String
+  updatedAt: DateTime
+}

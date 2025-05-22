@@ -9,6 +9,9 @@ import { AllExceptionsFilter } from "./logger/error.handling";
 import { join } from "path";
 import * as bodyParser from "body-parser";
 import { NestExpressApplication } from "@nestjs/platform-express";
+import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
+
+
 
 
 async function start() {
@@ -30,11 +33,18 @@ async function start() {
     app.useGlobalFilters(new AllExceptionsFilter());
 
     app.enableCors({
-      origin: "*",
+      origin: "http://localhost:5173",
+      allowedHeaders: [
+      'Accept',
+      'Authorization',
+      'Content-Type',
+      'X-Requested-With',
+      'apollo-require-preflight',
+    ],
       methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
       credentials: true,
     });
-    app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads/' });
+    app.use(graphqlUploadExpress({ maxFileSize: 10000000000, maxFiles: 1 }))
     const config = new DocumentBuilder()
       .setTitle("api.phono.uz")
       .setVersion("v-01")
