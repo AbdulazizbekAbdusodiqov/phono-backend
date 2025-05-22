@@ -30,8 +30,8 @@ import { TokenService } from './chat/token/token.service';
 const pubSub = new RedisPubSub({
   connection: {
     username: 'default',
-    password: 'Dp0wuTRebWGdAyaUlTW6yfSG47uBlPJV',
-    host: 'redis-18243.c10.us-east-1-4.ec2.redns.redis-cloud.com',
+    password: process.env.REDIS_PASSWORD,
+    host: process.env.REDIS_HOST,
     port: 18243,
     retryStrategy: (times) => {
       // retry strategy
