@@ -6,26 +6,28 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class PaymentMethodService {
   constructor(private readonly prismaService: PrismaService) {}
-    create(createPaymentMethodDto: CreatePaymentMethodDto) {
-      return this.prismaService.paymentMethod.create({ data: createPaymentMethodDto });
-    }
-  
-    findAll() {
-      return this.prismaService.paymentMethod.findMany();
-    }
-  
-    findOne(id: number) {
-      return this.prismaService.paymentMethod.findUnique({ where: { id } });
-    }
-  
-    update(id: number, updateDistrictDto: UpdatePaymentMethodDto) {
-      return this.prismaService.paymentMethod.update({
-        where: { id },
-        data: updateDistrictDto,
-      });
-    }
-  
-    remove(id: number) {
-      return this.prismaService.paymentMethod.delete({ where: { id } });
-    }
+  create(createPaymentMethodDto: CreatePaymentMethodDto) {
+    return this.prismaService.paymentMethod.create({
+      data: createPaymentMethodDto,
+    });
+  }
+
+  findAll() {
+    return this.prismaService.paymentMethod.findMany();
+  }
+
+  findOne(id: number) {
+    return this.prismaService.paymentMethod.findUnique({ where: { id } });
+  }
+
+  update(id: number, updatePaymentMethodDto: UpdatePaymentMethodDto) {
+    return this.prismaService.paymentMethod.update({
+      where: { id },
+      data: updatePaymentMethodDto,
+    });
+  }
+
+  remove(id: number) {
+    return this.prismaService.paymentMethod.delete({ where: { id } });
+  }
 }

@@ -24,6 +24,7 @@ export class CreateEmailDto {
     example: 'example@gmail.com',
   })
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @ApiProperty()

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePhoneNumberDto } from './dto/create-phone_number.dto';
 import { UpdatePhoneNumberDto } from './dto/update-phone_number.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -6,28 +6,41 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class PhoneNumberService {
   constructor(private readonly prismaService: PrismaService) {}
-  create(createPhoneNumberDto: CreatePhoneNumberDto) {
-    return this.prismaService.phoneNumber.create({
+
+  async create(createPhoneNumberDto: CreatePhoneNumberDto) {
+    return await this.prismaService.phoneNumber.create({
       data: createPhoneNumberDto,
     });
   }
 
-  findAll() {
-    return this.prismaService.phoneNumber.findMany();
+  async findAll() {
+    return await this.prismaService.phoneNumber.findMany();
   }
 
-  findOne(id: number) {
-    return this.prismaService.phoneNumber.findUnique({ where: { id } });
-  }
-
-  update(id: number, updateDistrictDto: UpdatePhoneNumberDto) {
-    return this.prismaService.phoneNumber.update({
+  async findOne(id: number) {
+    const phoneNumber = await this.prismaService.phoneNumber.findUnique({
       where: { id },
-      data: updateDistrictDto,
+    });
+    if (!phoneNumber) {
+      throw new NotFoundException(`Phone number with ID ${id} not found`);
+    }
+    return phoneNumber;
+  }
+
+  async update(id: number, updatePhoneNumberDto: UpdatePhoneNumberDto) {
+    // Avval mavjudligini tekshirish
+    await this.findOne(id);
+
+    return await this.prismaService.phoneNumber.update({
+      where: { id },
+      data: updatePhoneNumberDto,
     });
   }
 
-  remove(id: number) {
-    return this.prismaService.phoneNumber.delete({ where: { id } });
+  async remove(id: number) {
+    // Avval mavjudligini tekshirish
+    await this.findOne(id);
+
+    return await this.prismaService.phoneNumber.delete({ where: { id } });
   }
 }
