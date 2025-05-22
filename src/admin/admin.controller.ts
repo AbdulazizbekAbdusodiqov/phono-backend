@@ -41,7 +41,7 @@ export class AdminController {
   @ApiOperation({summary: 'Update admin password by ID'})
   @ApiBearerAuth('phono')   
   @UseGuards(AdminGuard, AdminSelfGuard)
-  @Patch(':id')
+  @Patch('password/:id')
   updatePassword(@Param('id') id: string, @Body() UpdateAdminPasswordDto: UpdateAdminPasswordDto) {
     return this.adminService.updatePassword(+id, UpdateAdminPasswordDto);
   }
