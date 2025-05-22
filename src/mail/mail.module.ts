@@ -21,7 +21,7 @@ import {HandlebarsAdapter} from "@nestjs-modules/mailer/dist/adapters/handlebars
         },
 
         defaults: {
-          from: `UZ-INVEST - ${config.get<string>("SMTP_USER")}`,
+          from: `PHONO-TECH - ${config.get<string>("SMTP_USER")}`,
         },
         template: {
           dir: join(__dirname, "templates"),

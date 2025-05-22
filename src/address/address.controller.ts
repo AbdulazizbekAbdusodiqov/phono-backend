@@ -1,34 +1,79 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AddressService } from './address.service';
-import { CreateAddressDto } from './dto/create-address.dto';
-import { UpdateAddressDto } from './dto/update-address.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from "@nestjs/common";
+import { AddressService } from "./address.service";
+import { CreateAddressDto } from "./dto/create-address.dto";
+import { UpdateAddressDto } from "./dto/update-address.dto";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+  ApiBearerAuth,
+} from "@nestjs/swagger";
+import { UserGuard } from "../guards/user.guard";
+import { GetCurrentUserId } from "../decorators/get-current-user-id.decorator";
+import { UserSelfGuard } from "../guards/user-self.guard";
 
-@Controller('address')
+@ApiTags("Address")
+@ApiBearerAuth("phono")
+@Controller("address")
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
+  @UseGuards(UserGuard)
   @Post()
+  @ApiOperation({ summary: "Create a new address" })
+  @ApiBody({ type: CreateAddressDto })
+  @ApiResponse({ status: 201, description: "Address successfully created." })
+  @ApiResponse({ status: 400, description: "Invalid input." })
   create(@Body() createAddressDto: CreateAddressDto) {
     return this.addressService.create(createAddressDto);
   }
 
+  @UseGuards(UserGuard)
   @Get()
-  findAll() {
-    return this.addressService.findAll();
+  @ApiOperation({ summary: "Get all addresses" })
+  @ApiResponse({ status: 200, description: "List of all addresses." })
+  findAll(@GetCurrentUserId() userId: number) {
+    return this.addressService.findAll(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  @ApiOperation({ summary: "Get address by ID" })
+  @ApiParam({ name: "id", type: Number, description: "Address ID" })
+  @ApiResponse({ status: 200, description: "Address found." })
+  @ApiResponse({ status: 404, description: "Address not found." })
+  findOne(@Param("id") id: string) {
     return this.addressService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
+  @UseGuards(UserGuard, UserSelfGuard)
+  @Patch(":id")
+  @ApiOperation({ summary: "Update an address by ID" })
+  @ApiParam({ name: "id", type: Number, description: "Address ID" })
+  @ApiBody({ type: UpdateAddressDto })
+  @ApiResponse({ status: 200, description: "Address updated successfully." })
+  @ApiResponse({ status: 404, description: "Address not found." })
+  update(@Param("id") id: string, @Body() updateAddressDto: UpdateAddressDto) {
     return this.addressService.update(+id, updateAddressDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @UseGuards(UserGuard, UserSelfGuard)
+  @Delete(":id")
+  @ApiOperation({ summary: "Delete an address by ID" })
+  @ApiParam({ name: "id", type: Number, description: "Address ID" })
+  @ApiResponse({ status: 200, description: "Address deleted successfully." })
+  @ApiResponse({ status: 404, description: "Address not found." })
+  remove(@Param("id") id: string) {
     return this.addressService.remove(+id);
   }
 }
