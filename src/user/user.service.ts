@@ -76,7 +76,7 @@ export class UserService {
   async findOne(id: number) {
     return await this.prisma.user.findUnique({
       where: { id },
-      include: { phone_number: true },
+      include: { phone_number: true, address: true, email: true },
     });
   }
 
@@ -84,8 +84,42 @@ export class UserService {
     return await this.prisma.user.findUnique({ where: { id } });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+    image: Express.Multer.File
+  ) {
+    const data: any = {};
+
+    if (updateUserDto.first_name) {
+      data.first_name = updateUserDto.first_name;
+    }
+
+    if (updateUserDto.last_name) {
+      data.last_name = updateUserDto.last_name;
+    }
+
+    if (updateUserDto.brith_date) {
+      data.birth_date = updateUserDto.brith_date;
+    }
+
+    if (updateUserDto.password) {
+      data.password = await BcryptEncryption.encrypt(updateUserDto.password);
+    }
+
+    if (image) {
+      data.profile_img = image.filename;
+    }
+    await this.prisma.user.update({
+      where: { id },
+      data,
+    });
+
+    return {
+      message: "Successfully updated user,",
+      data: {},
+      status_code: 200,
+    };
   }
 
   async remove(id: number) {
@@ -97,5 +131,43 @@ export class UserService {
       where: { id: userId },
       data: { is_active: false },
     });
+  }
+
+  async searchUsers(query: string, page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
+    const whereClause: any = {
+      OR: [
+        { first_name: { contains: query, mode: "insensitive" } },
+        { last_name: { contains: query, mode: "insensitive" } },
+        {
+          phone_number: {
+            some: {
+              phone_number: { contains: query, mode: "insensitive" },
+            },
+          },
+        },
+      ],
+    };
+
+    const [users, total] = await this.prisma.$transaction([
+      this.prisma.user.findMany({
+        where: whereClause,
+        include: { phone_number: true },
+        skip,
+        take: limit,
+      }),
+      this.prisma.user.count({ where: whereClause }),
+    ]);
+
+    return {
+      data: users,
+      meta: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    };
   }
 }

@@ -1,16 +1,10 @@
 import {
-  IsString,
-  IsInt,
-  Min,
-  Length,
   IsNumber,
   IsOptional,
-  IsEmail,
   IsNotEmpty,
-  IsBoolean,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 
 export class CreatePaymentDto {
   @ApiProperty({ required: false })

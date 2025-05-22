@@ -42,7 +42,7 @@ const pubSub = new RedisPubSub({
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
+    ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     PrismaModule,
     // AuthModule,
     UserModule,
