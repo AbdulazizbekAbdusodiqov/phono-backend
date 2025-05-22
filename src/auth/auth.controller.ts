@@ -23,11 +23,10 @@ import { SuperAdminGuard } from "../guards/superAdmin.guard";
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  //================================  For Admin ============================================
 
   @ApiOperation({ summary: "Register a new admin" })
   @ApiBearerAuth('phono')
-  @UseGuards(AdminGuard)
+  @UseGuards(AdminGuard, SuperAdminGuard)
   @Post("admin/sign-up")
   signUpAdmin(@Body() createAdminDto: CreateAdminDto) {    
     return this.authService.adminSignUp(createAdminDto);

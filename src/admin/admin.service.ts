@@ -4,7 +4,7 @@ import {
     NotFoundException,
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateAdminDto, UpdateAdminDto } from "./dto";
+import { CreateAdminDto,UpdateAdminDto, UpdateAdminPasswordDto } from "./dto";
 import * as bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import { Admin } from "@prisma/client";
@@ -58,6 +58,21 @@ export class AdminService {
             data: updateAdminDto,
         });
     }
+    async updatePassword(id: number, updateAdminPasswordDto: UpdateAdminPasswordDto) {
+        await this.findOne(id);
+        const { password, confirm_password } = updateAdminPasswordDto;        
+        if (password !== confirm_password) {
+            throw new BadRequestException("Passwords did not match");
+        }
+
+        const hashed_password = await bcrypt.hash(password, 7);
+
+        return this.prismaService.admin.update({
+            where: { id },
+            data: {hashed_password},
+        });
+    }
+
 
     remove(id: number) {
         return this.prismaService.admin.delete({ where: { id } });
