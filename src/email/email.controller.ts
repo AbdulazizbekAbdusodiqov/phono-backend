@@ -7,11 +7,16 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { UpdateEmailDto } from './dto/update-email.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AdminGuard } from '../guards/admin.guard';
+import { AdminSelfGuard } from '../guards/admin-self.guard';
+import { UserGuard } from '../guards/user.guard';
+import { UserSelfGuard } from '../guards/user-self.guard';
 
 @ApiTags('Emails')
 @Controller('email')
@@ -29,6 +34,7 @@ export class EmailController {
   @Get()
   @ApiOperation({ summary: 'Get all emails' })
   @ApiResponse({ status: 200, description: 'List of emails' })
+  @UseGuards(AdminGuard, AdminSelfGuard)
   findAll() {
     return this.emailService.findAll();
   }
@@ -37,6 +43,7 @@ export class EmailController {
   @ApiOperation({ summary: 'Get an email by ID' })
   @ApiResponse({ status: 200, description: 'Email found' })
   @ApiResponse({ status: 404, description: 'Email not found' })
+  @UseGuards(UserGuard, UserSelfGuard)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.emailService.findOne(id);
   }
@@ -45,6 +52,7 @@ export class EmailController {
   @ApiOperation({ summary: 'Update an email by ID' })
   @ApiResponse({ status: 200, description: 'Email updated' })
   @ApiResponse({ status: 404, description: 'Email not found' })
+  @UseGuards(UserGuard, UserSelfGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateEmailDto: UpdateEmailDto,
@@ -56,6 +64,7 @@ export class EmailController {
   @ApiOperation({ summary: 'Delete an email by ID' })
   @ApiResponse({ status: 200, description: 'Email deleted' })
   @ApiResponse({ status: 404, description: 'Email not found' })
+  @UseGuards(UserGuard, UserSelfGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.emailService.remove(id);
   }
