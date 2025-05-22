@@ -12,7 +12,7 @@ import {
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AdminSelfGuard } from '../guards/admin-self.guard';
 import { AdminGuard } from '../guards/admin.guard';
 import { UserGuard } from '../guards/user.guard';
@@ -34,6 +34,7 @@ export class PaymentController {
   @Get()
   @ApiOperation({ summary: 'Get all payments' })
   @ApiResponse({ status: 200, description: 'List of payments' })
+  @ApiBearerAuth('phono')
   @UseGuards(AdminGuard, AdminSelfGuard)
   findAll() {
     return this.paymentService.findAll();
@@ -43,6 +44,7 @@ export class PaymentController {
   @ApiOperation({ summary: 'Get payment by ID' })
   @ApiResponse({ status: 200, description: 'Payment found' })
   @ApiResponse({ status: 404, description: 'Payment not found' })
+  @ApiBearerAuth('phono')
   @UseGuards(UserGuard, UserSelfGuard)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.paymentService.findOne(id);
@@ -52,6 +54,7 @@ export class PaymentController {
   @ApiOperation({ summary: 'Update payment by ID' })
   @ApiResponse({ status: 200, description: 'Payment updated' })
   @ApiResponse({ status: 404, description: 'Payment not found' })
+  @ApiBearerAuth('phono')
   @UseGuards(UserGuard, UserSelfGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -64,6 +67,7 @@ export class PaymentController {
   @ApiOperation({ summary: 'Delete payment by ID' })
   @ApiResponse({ status: 200, description: 'Payment deleted' })
   @ApiResponse({ status: 404, description: 'Payment not found' })
+  @ApiBearerAuth('phono')
   @UseGuards(UserGuard, UserSelfGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.paymentService.remove(id);

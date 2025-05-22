@@ -12,7 +12,7 @@ import {
 import { PhoneNumberService } from './phone_number.service';
 import { CreatePhoneNumberDto } from './dto/create-phone_number.dto';
 import { UpdatePhoneNumberDto } from './dto/update-phone_number.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { UserSelfGuard } from '../guards/user-self.guard';
 import { UserGuard } from '../guards/user.guard';
 import { AdminGuard } from '../guards/admin.guard';
@@ -37,6 +37,7 @@ export class PhoneNumberController {
   @Get()
   @ApiOperation({ summary: 'Get all phone numbers' })
   @ApiResponse({ status: 200, description: 'List of phone numbers' })
+  @ApiBearerAuth('phono')
   @UseGuards(AdminGuard, AdminSelfGuard)
   findAll() {
     return this.phoneNumberService.findAll();
@@ -46,6 +47,7 @@ export class PhoneNumberController {
   @ApiOperation({ summary: 'Get a phone number by ID' })
   @ApiResponse({ status: 200, description: 'Phone number found' })
   @ApiResponse({ status: 404, description: 'Phone number not found' })
+  @ApiBearerAuth('phono')
   @UseGuards(UserGuard, UserSelfGuard)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.phoneNumberService.findOne(id);
@@ -55,6 +57,7 @@ export class PhoneNumberController {
   @ApiOperation({ summary: 'Update a phone number by ID' })
   @ApiResponse({ status: 200, description: 'Phone number updated' })
   @ApiResponse({ status: 404, description: 'Phone number not found' })
+  @ApiBearerAuth('phono')
   @UseGuards(UserGuard, UserSelfGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -67,6 +70,7 @@ export class PhoneNumberController {
   @ApiOperation({ summary: 'Delete a phone number by ID' })
   @ApiResponse({ status: 200, description: 'Phone number deleted' })
   @ApiResponse({ status: 404, description: 'Phone number not found' })
+  @ApiBearerAuth('phono')
   @UseGuards(UserGuard, UserSelfGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.phoneNumberService.remove(id);
