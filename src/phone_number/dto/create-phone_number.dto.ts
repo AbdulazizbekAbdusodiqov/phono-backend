@@ -15,7 +15,10 @@ export class CreatePhoneNumberDto {
   @Type(() => Number)
   user_id: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Telefon raqami',
+    example: '+99890-123-45-67',
+  })
   @IsPhoneNumber('UZ')
   @IsNotEmpty()
   phone_number: string;

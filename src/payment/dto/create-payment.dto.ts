@@ -25,7 +25,10 @@ export class CreatePaymentDto {
   @Type(() => Number)
   currency_id: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Payment miqdori',
+    example: 1000,
+  })
   @IsNumber()
   @IsNotEmpty()
   @Type(() => Number)

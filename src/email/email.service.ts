@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { UpdateEmailDto } from './dto/update-email.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -6,23 +6,37 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class EmailService {
   constructor(private readonly prismaService: PrismaService) {}
-    create(createEmailDto: CreateEmailDto) {
-        return this.prismaService.email.create({data:createEmailDto})
+
+  async create(createEmailDto: CreateEmailDto) {
+    return await this.prismaService.email.create({ data: createEmailDto });
+  }
+
+  async findAll() {
+    return await this.prismaService.email.findMany();
+  }
+
+  async findOne(id: number) {
+    const email = await this.prismaService.email.findUnique({ where: { id } });
+    if (!email) {
+      throw new NotFoundException(`Email with ID ${id} not found`);
     }
-  
-    findAll() {
-      return this.prismaService.email.findMany()
-    }
-  
-    findOne(id: number) {
-      return this.prismaService.email.findUnique({where:{id}})
-    }
-  
-    update(id: number, updateDistrictDto: UpdateEmailDto) {
-      return this.prismaService.email.update({where:{id}, data:updateDistrictDto})
-    }
-  
-    remove(id: number) {
-      return this.prismaService.email.delete({where:{id}})
-    }
+    return email;
+  }
+
+  async update(id: number, updateEmailDto: UpdateEmailDto) {
+    // Avval mavjudligini tekshirish
+    await this.findOne(id);
+
+    return await this.prismaService.email.update({
+      where: { id },
+      data: updateEmailDto,
+    });
+  }
+
+  async remove(id: number) {
+    // Avval mavjudligini tekshirish
+    await this.findOne(id);
+
+    return await this.prismaService.email.delete({ where: { id } });
+  }
 }
