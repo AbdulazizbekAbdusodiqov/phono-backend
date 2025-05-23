@@ -33,7 +33,7 @@ export class ChatroomResolver {
     resolve: (value) => value.newMessage,
   })
   newMessage(@Args('chatroomId') chatroomId: number) {
-    return this.pubSub.asyncIterator(`newMessage.${chatroomId}`);
+    return this.pubSub.asyncIterableIterator(`newMessage.${chatroomId}`);
   }
   @Subscription(() => User, {
     nullable: true,
@@ -47,7 +47,7 @@ export class ChatroomResolver {
     @Args('chatroomId') chatroomId: number,
     @Args('userId') userId: number,
   ) {
-    return this.pubSub.asyncIterator(`userStartedTyping.${chatroomId}`);
+    return this.pubSub.asyncIterableIterator(`userStartedTyping.${chatroomId}`);
   }
 
   @Subscription(() => User, {
@@ -61,7 +61,7 @@ export class ChatroomResolver {
     @Args('chatroomId') chatroomId: number,
     @Args('userId') userId: number,
   ) {
-    return this.pubSub.asyncIterator(`userStoppedTyping.${chatroomId}`);
+    return this.pubSub.asyncIterableIterator(`userStoppedTyping.${chatroomId}`);
   }
 
   @UseFilters(GraphQLErrorFilter)

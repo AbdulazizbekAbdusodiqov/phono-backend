@@ -26,7 +26,7 @@ export class LiveChatroomResolver {
     },
   })
   liveUsersInChatroom(@Args('chatroomId') chatroomId: number) {
-    return this.pubSub.asyncIterator(`liveUsersInChatroom.${chatroomId}`);
+    return this.pubSub.asyncIterableIterator(`liveUsersInChatroom.${chatroomId}`);
   }
 
   @UseFilters(GraphQLErrorFilter)
