@@ -22,7 +22,7 @@ export class UserResolver {
     @Context() context: { req: Request },
   ) {
     const profile_img = file ? await this.storeImageAndGetUrl(file) : null;
-    const userId = context.req.user?.sub;
+    const userId = context.req.user?.id;
     if(userId && profile_img)
       return this.userService.updateProfile(userId, first_name, profile_img);
     else
@@ -42,10 +42,10 @@ export class UserResolver {
   @UseGuards(GraphqlAuthGuard)
   @Query(() => [User])
   async searchUsers(
-    @Args('fullname') first_name: string,
+    @Args('first_name') first_name: string,
     @Context() context: { req: Request },
   ) {
-    return this.userService.searchUsers(first_name, context.req.user!.sub);
+    return this.userService.searchUsers(first_name, context.req.user?.id);
   }
 
   @UseGuards(GraphqlAuthGuard)

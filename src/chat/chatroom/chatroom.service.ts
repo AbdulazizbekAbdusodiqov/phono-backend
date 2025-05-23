@@ -18,7 +18,7 @@ export class ChatroomService {
     });
   }
 
-  async createChatroom(name: string, sub: number) {
+  async createChatroom(name: string, id: number) {
     const existingChatroom = await this.prisma.chatroom.findFirst({
       where: {
         name,
@@ -32,7 +32,7 @@ export class ChatroomService {
         name,
         users: {
           connect: {
-            id: sub,
+            id: id,
           },
         },
       },

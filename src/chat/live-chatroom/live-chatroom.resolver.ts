@@ -36,8 +36,12 @@ export class LiveChatroomResolver {
     @Args('chatroomId') chatroomId: number,
     @Context() context: { req: Request },
   ) {
-    if (context.req.user?.sub) {
-      const user = await this.userService.getUser(context.req.user.sub);
+    if (context.req.user?.id
+
+    ) {
+      const user = await this.userService.getUser(context.req.user.id
+
+      );
       await this.liveChatroomService.addLiveUserToChatroom(chatroomId, user);
       const liveUsers = await this.liveChatroomService
         .getLiveUsersForChatroom(chatroomId)
@@ -65,8 +69,8 @@ export class LiveChatroomResolver {
     @Args('chatroomId') chatroomId: number,
     @Context() context: { req: Request },
   ) {
-    if(context.req.user?.sub){
-      const user = await this.userService.getUser(context.req.user.sub);
+    if(context.req.user?.id){
+      const user = await this.userService.getUser(context.req.user.id);
       await this.liveChatroomService.removeLiveUserFromChatroom(chatroomId, user);
       const liveUsers = await this.liveChatroomService.getLiveUsersForChatroom(
         chatroomId,

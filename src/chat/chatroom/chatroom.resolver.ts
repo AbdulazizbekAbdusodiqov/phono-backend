@@ -71,8 +71,8 @@ export class ChatroomResolver {
     @Args('chatroomId') chatroomId: number,
     @Context() context: { req: Request },
   ) {
-    if(context.req.user?.sub){
-      const user = await this.userService.getUser(context.req.user?.sub);
+    if(context.req.user?.id){
+      const user = await this.userService.getUser(context.req.user?.id);
       await this.pubSub.publish(`userStartedTyping.${chatroomId}`, {
         user,
         typingUserId: user?.id,
@@ -88,8 +88,8 @@ export class ChatroomResolver {
     @Args('chatroomId') chatroomId: number,
     @Context() context: { req: Request },
   ) {
-    if(context.req.user?.sub){
-      const user = await this.userService.getUser(context.req.user.sub);
+    if(context.req.user?.id){
+      const user = await this.userService.getUser(context.req.user.id);
   
       await this.pubSub.publish(`userStoppedTyping.${chatroomId}`, {
         user,
@@ -111,11 +111,11 @@ export class ChatroomResolver {
   ) {
     let imagePath: null | string = null;
     if (image) imagePath = await this.chatroomService.saveImage(image);
-    if(imagePath && context.req.user?.sub){
+    if(imagePath && context.req.user?.id){
       const newMessage = await this.chatroomService.sendMessage(
         chatroomId,
         content,
-        context.req.user.sub,
+        context.req.user.id,
         imagePath,
       );
       await this.pubSub
@@ -139,8 +139,8 @@ export class ChatroomResolver {
     @Args('name') name: string,
     @Context() context: { req: Request },
   ) {
-    if(context.req.user?.sub)
-      return this.chatroomService.createChatroom(name, context.req.user.sub);
+    if(context.req.user?.id)
+      return this.chatroomService.createChatroom(name, context.req.user.id);
     return null;
   }
 
