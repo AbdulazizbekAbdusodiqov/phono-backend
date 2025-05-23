@@ -2,7 +2,7 @@ import { Resolver, Query, Context, Mutation, Args } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './user.type';
 import { Request } from 'express';
-import { UseGuards } from '@nestjs/common';
+import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { GraphqlAuthGuard } from '../guards/graphql-auth.guard';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
@@ -23,10 +23,12 @@ export class UserResolver {
   ) {
     const profile_img = file ? await this.storeImageAndGetUrl(file) : null;
     const userId = context.req.user?.id;
-    if (userId && profile_img)
-      return this.userService.updateProfile(userId, first_name, profile_img);
-    else
-      return null
+
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    return this.userService.updateProfile(userId, first_name, profile_img);
   }
 
   private async storeImageAndGetUrl(file: GraphQLUpload) {

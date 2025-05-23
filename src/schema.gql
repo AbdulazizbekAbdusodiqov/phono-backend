@@ -60,6 +60,7 @@ type User {
   last_name: String
   last_online: DateTime
   password: String
+  phone_number: String!
   profile_img: String
   updatedAt: DateTime
 }

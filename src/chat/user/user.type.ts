@@ -17,6 +17,9 @@ export class User {
   @Field({ nullable: true })
   profile_img?: string;
 
+  @Field()
+  phone_number?: string;
+
   @Field({ nullable: true })
   is_active?: boolean;
 
