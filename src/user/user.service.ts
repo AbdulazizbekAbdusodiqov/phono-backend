@@ -40,7 +40,7 @@ export class UserService {
         id: true,
         first_name: true,
         last_name: true,
-        brith_date: true,
+        birth_date: true,
         profile_img: true,
         is_active: true,
         is_premium: true,
