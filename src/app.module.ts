@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { PrismaModule } from "./prisma/prisma.module";
 import { AdminModule } from "./admin/admin.module";
 import { AuthModule } from "./auth/auth.module";
@@ -18,6 +18,27 @@ import { EmailModule } from "./email/email.module";
 import { PhoneNumberModule } from "./phone_number/phone_number.module";
 import { PaymentModule } from "./payment/payment.module";
 import { PaymentMethodModule } from "./payment_method/payment_method.module";
+import { ChatModule } from './chat/chat.module';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver } from '@nestjs/apollo';
+import { TokenService } from './chat/token/token.service';
+
+
+const pubSub = new RedisPubSub({
+  connection: {
+    username: 'default',
+    password: process.env.REDIS_PASSWORD,
+    host: process.env.REDIS_HOST,
+    port: 18243,
+    retryStrategy: (times) => {
+      // retry strategy
+      return Math.min(times * 50, 2000);
+    },
+  },
+});
 
 @Module({
   imports: [
@@ -40,6 +61,50 @@ import { PaymentMethodModule } from "./payment_method/payment_method.module";
     PhoneNumberModule,
     PaymentModule,
     PaymentMethodModule,
+    ChatModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/',
+    }),
+    GraphQLModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      driver: ApolloDriver,
+      useFactory: async (
+        configService: ConfigService,
+
+        tokenService: TokenService,
+      ) => {
+        return {
+          installSubscriptionHandlers: true,
+          playground: true,
+          autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+          sortSchema: true,
+          subscriptions: {
+            'graphql-ws': true,
+            'subscriptions-transport-ws': true,
+          },
+          onConnect: (connectionParams) => {
+            const token = tokenService.extractToken(connectionParams);
+
+            if (!token) {
+              throw new Error('Token not provided');
+            }
+            const user = tokenService.validateToken(token);
+            if (!user) {
+              throw new Error('Invalid token');
+            }
+            return { user };
+          },
+          context: ({ req, res, connection }) => {
+            if (connection) {
+              return { req, res, user: connection.context.user, pubSub }; // Injecting pubSub into context
+            }
+            return { req, res };
+          },
+        };
+      },
+    }),
   ],
   controllers: [],
   providers: [],
