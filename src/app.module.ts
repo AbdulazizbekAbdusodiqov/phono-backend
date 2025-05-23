@@ -32,7 +32,7 @@ const pubSub = new RedisPubSub({
     username: 'default',
     password: process.env.REDIS_PASSWORD,
     host: process.env.REDIS_HOST,
-    port: 18243,
+    port: +process.env.REDIS_PORT! || 6379,
     retryStrategy: (times) => {
       // retry strategy
       return Math.min(times * 50, 2000);
