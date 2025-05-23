@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { LiveChatroomModule } from './live-chatroom/live-chatroom.module';
 import { ChatroomModule } from './chatroom/chatroom.module';
-import { UserModule } from 'src/user/user.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [

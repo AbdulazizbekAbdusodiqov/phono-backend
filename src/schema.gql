@@ -33,6 +33,7 @@ type Mutation {
   enterChatroom(chatroomId: Float!): Boolean!
   leaveChatroom(chatroomId: Float!): Boolean!
   sendMessage(chatroomId: Float!, content: String!, image: Upload): Message!
+  updateProfile(file: Upload, first_name: String!): User!
   userStartedTypingMutation(chatroomId: Float!): User!
   userStoppedTypingMutation(chatroomId: Float!): User!
 }
@@ -40,6 +41,8 @@ type Mutation {
 type Query {
   getChatroomsForUser(userId: Float!): [Chatroom!]!
   getMessagesForChatroom(chatroomId: Float!): [Message!]!
+  getUsersOfChatroom(chatroomId: Float!): [User!]!
+  searchUsers(first_name: String!): [User!]!
 }
 
 type Subscription {
