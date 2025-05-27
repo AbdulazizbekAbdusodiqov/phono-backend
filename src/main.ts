@@ -30,7 +30,7 @@ async function start() {
         forbidNonWhitelisted: true,
       }),
     );
-    app.useGlobalFilters(new AllExceptionsFilter());
+    // app.useGlobalFilters(new AllExceptionsFilter());
 
     app.enableCors({
       origin: "http://localhost:5173",
