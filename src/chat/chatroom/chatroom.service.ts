@@ -104,10 +104,10 @@ export class ChatroomService {
       include: {
         chatroom: {
           include: {
-            users: true, // Eager loading users
+            users: true,
           },
-        }, // Eager loading Chatroom
-        user: true, // Eager loading User
+        },
+        user: true,
       },
     });
   }

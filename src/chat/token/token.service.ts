@@ -6,7 +6,8 @@ export class TokenService {
   constructor(private configService: ConfigService) {}
 
   extractToken(connectionParams: any): string | null {
-    return connectionParams?.authorization || null;
+    console.log("TOKEN",connectionParams.Authorization);
+    return connectionParams?.Authorization || null;
   }
 
   validateToken(token: string): any {

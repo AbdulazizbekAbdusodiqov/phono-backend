@@ -39,8 +39,9 @@ type Mutation {
 }
 
 type Query {
-  getChatroomsForUser(userId: Float!): [Chatroom!]!
+  getChatroomsForUser: [Chatroom!]!
   getMessagesForChatroom(chatroomId: Float!): [Message!]!
+  getUser: User!
   getUsersOfChatroom(chatroomId: Float!): [User!]!
   searchUsers(first_name: String!): [User!]!
 }
@@ -63,7 +64,7 @@ type User {
   last_name: String
   last_online: DateTime
   password: String
-  phone_number: String!
+  phone_number: String
   profile_img: String
   updatedAt: DateTime
 }
