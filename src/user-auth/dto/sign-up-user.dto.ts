@@ -31,7 +31,7 @@ export class SingUpUserDto {
     description: "Password for the user account",
   })
   @IsString()
-  @MinLength(6)
+  @MinLength(4)
   @MaxLength(100)
   password: string;
 
