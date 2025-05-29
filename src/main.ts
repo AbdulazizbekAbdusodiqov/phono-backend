@@ -1,17 +1,17 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
-import * as cookieParser from 'cookie-parser';
-import { WinstonModule } from 'nest-winston';
-import { winstonConfig } from './logger/winston-logger';
-import { AllExceptionsFilter } from './logger/error.handling';
-import { join } from 'path';
-import * as bodyParser from 'body-parser';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
-import * as dotenv from 'dotenv'
-dotenv.config()
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { ValidationPipe } from "@nestjs/common";
+import * as cookieParser from "cookie-parser";
+import { WinstonModule } from "nest-winston";
+import { winstonConfig } from "./logger/winston-logger";
+import { AllExceptionsFilter } from "./logger/error.handling";
+import { join } from "path";
+import * as bodyParser from "body-parser";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import * as graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.js";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 async function start() {
   try {
@@ -28,80 +28,80 @@ async function start() {
         transformOptions: { enableImplicitConversion: true },
         whitelist: true,
         forbidNonWhitelisted: true,
-      }),
+      })
     );
-    // app.useGlobalFilters(new AllExceptionsFilter());
+    app.useGlobalFilters(new AllExceptionsFilter());
 
     app.enableCors({
-      origin: "http://localhost:5173",
+      origin: "http://localhost:3000",
       allowedHeaders: [
-        'Accept',
-        'Authorization',
-        'Content-Type',
-        'X-Requested-With',
-        'apollo-require-preflight',
+        "Accept",
+        "Authorization",
+        "Content-Type",
+        "X-Requested-With",
+        "apollo-require-preflight",
       ],
-      methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
+      methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
       credentials: true,
     });
-    app.use(graphqlUploadExpress({ maxFileSize: 10000000000, maxFiles: 1 }))
+    app.use(graphqlUploadExpress({ maxFileSize: 10000000000, maxFiles: 1 }));
 
     const config = new DocumentBuilder()
-      .setTitle('api.phono.uz')
-      .setVersion('v-01')
+      .setTitle("api.phono.uz")
+      .setVersion("v-01")
       .addBearerAuth(
         {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          name: 'JWT',
-          description: 'Enter JWT token',
-          in: 'header',
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          name: "JWT",
+          description: "Enter JWT token",
+          in: "header",
         },
-        'phono',
+        "phono"
       )
       .build();
 
-    app.setGlobalPrefix('api');
+    app.setGlobalPrefix("api");
 
-    app.useStaticAssets(join(__dirname, '..', 'public', 'uploads'), {
-      prefix: '/api/uploads/',
+    app.useStaticAssets(join(__dirname, "..", "public", "uploads"), {
+      prefix: "/api/uploads/",
     });
 
-    app.use(bodyParser.json({ limit: '50mb' }));
-    app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+    app.use(bodyParser.json({ limit: "50mb" }));
+    app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
     const document = SwaggerModule.createDocument(app, config);
 
-    SwaggerModule.setup('api/docs', app, document, {
+    SwaggerModule.setup("api/docs", app, document, {
       swaggerOptions: { defaultModelsExpandDepth: -1 },
     });
 
     await app.listen(PORT, () => {
       console.log(
-        '\n\n + ====================================================================== +',
+        "\n\n + ====================================================================== +"
       );
       console.log(
-        `| |                                                                      | | `,
+        `| |                                                                      | | `
       );
       console.log(
-        `| | 🚀          Server started at: http://localhost:${PORT}/api          🚀 | | `,
+        `| | 🚀          Server started at: http://localhost:${PORT}/api          🚀 | | `
       );
       console.log(
-        `| |                                                                      | | `,
+        `| |                                                                      | | `
       );
       console.log(
-        `| | 📚  Swagger API documentation at: http://localhost:${PORT}/api/docs  📚 | |`,
+        `| | 📚  Swagger API documentation at: http://localhost:${PORT}/api/docs  📚 | |`
       );
       console.log(
-        `| |                                                                      | | `,
+        `| |                                                                      | | `
       );
       console.log(
-        ' + ====================================================================== +',
+        " + ====================================================================== +"
       );
     });
   } catch (error) {
-    console.error('❌ Error starting server:', error);
+    console.error("❌ Error starting server:", error);
   }
 }
 

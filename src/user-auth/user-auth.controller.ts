@@ -21,8 +21,11 @@ export class UserAuthController {
     status: 400,
     description: "Invalid input or user already exists",
   })
-  signUp(@Body() dto: SingUpUserDto) {
-    return this.userAuthService.signUp(dto);
+  signUp(
+    @Body() dto: SingUpUserDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    return this.userAuthService.signUp(dto, res);
   }
 
   @Post("login")

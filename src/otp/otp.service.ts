@@ -27,7 +27,16 @@ export class OtpService {
 
   async generateOtp(dto: CreateOtpDto) {
     // recieve phnoe number
+
     const { phone_number } = dto;
+
+    const phoneExist = await this.prisma.phoneNumber.findFirst({
+      where: { is_main: true, phone_number },
+    });
+
+    if (phoneExist) {
+      throw new BadRequestException("Already registred");
+    }
 
     await this.prisma.otp.deleteMany({
       where: { phone_number },
@@ -59,14 +68,14 @@ export class OtpService {
       timeStamp: now,
       otp_id: createdOtp.id,
       phone_number,
-      is_used: false
+      is_used: false,
     };
 
     const encodedData = await encode(JSON.stringify(details));
 
     const res = await SmsService.sendSMS(phone_number, otp);
 
-    return { encodedData, res };
+    return { key: encodedData, message: "successfully send otp", status: 200 };
   }
 
   async verifyOtp(dto: VerifyDto) {
