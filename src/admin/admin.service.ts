@@ -28,7 +28,7 @@ export class AdminService {
         const hashed_password = await bcrypt.hash(password, 7);
 
         return this.prismaService.admin.create({
-            data: { ...data, hashed_password, activation_link },
+            data: { ...data, hashed_password, activation_link, is_creator:true },
         });
     }
 
