@@ -33,7 +33,7 @@ async function start() {
     app.useGlobalFilters(new AllExceptionsFilter());
 
     app.enableCors({
-      origin: "http://localhost:3000",
+      origin: ["http://localhost:3000", "https://phono-front.vercel.app"],
       allowedHeaders: [
         "Accept",
         "Authorization",
