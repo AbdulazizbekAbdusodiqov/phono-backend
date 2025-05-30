@@ -26,7 +26,7 @@ export class AuthController {
 
   @ApiOperation({ summary: "Register a new admin" })
   @ApiBearerAuth('phono')
-  @UseGuards(AdminGuard, SuperAdminGuard)
+  // @UseGuards(AdminGuard, SuperAdminGuard)
   @Post("admin/sign-up")
   signUpAdmin(@Body() createAdminDto: CreateAdminDto) {    
     return this.authService.adminSignUp(createAdminDto);
