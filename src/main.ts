@@ -44,7 +44,10 @@ async function start() {
       methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
       credentials: true,
     });
-    app.use(graphqlUploadExpress({ maxFileSize: 10000000000, maxFiles: 1 }));
+    app.use(
+      "/graphql",
+      graphqlUploadExpress({ maxFileSize: 10000000000, maxFiles: 1 })
+    );
 
     const config = new DocumentBuilder()
       .setTitle("api.phono.uz")
