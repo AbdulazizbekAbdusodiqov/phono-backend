@@ -1,6 +1,13 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { ApiProperty } from "@nestjs/swagger";
+import {
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from "class-validator";
+import { Transform, Type } from "class-transformer";
 
 export class CreateProductDto {
   @ApiProperty()
@@ -20,7 +27,7 @@ export class CreateProductDto {
   @Type(() => Number)
   ram: number;
 
-  @ApiProperty({required:false})
+  @ApiProperty({ required: false })
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
@@ -32,13 +39,13 @@ export class CreateProductDto {
   @Type(() => Number)
   brand_id: number;
 
-  @ApiProperty({required:false})
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
   model_id?: number;
 
-  @ApiProperty({required:false})
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   other_model?: string;
@@ -74,19 +81,16 @@ export class CreateProductDto {
   @ApiProperty()
   @IsBoolean()
   @IsNotEmpty()
-  @Transform(({ value }) => value === 'true' || value === true)
   negotiable: boolean;
 
   @ApiProperty()
   @IsBoolean()
   @IsNotEmpty()
-  @Transform(({ value }) => value === 'true' || value === true)
   condition: boolean;
 
   @ApiProperty()
   @IsBoolean()
   @IsNotEmpty()
-  @Transform(({ value }) => value === 'true' || value === true)
   has_document: boolean;
 
   @ApiProperty()
@@ -94,7 +98,7 @@ export class CreateProductDto {
   @IsNotEmpty()
   phone_number: string;
 
-  @ApiProperty({required:false})
+  @ApiProperty({ required: false })
   @IsNumber()
   @IsOptional()
   @Type(() => Number)

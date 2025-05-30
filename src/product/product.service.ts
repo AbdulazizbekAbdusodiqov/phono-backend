@@ -73,19 +73,45 @@ export class ProductService {
     }
   }
 
-  async findAll() {
-    return await this.prisma.product.findMany({
-      where: { is_deleted: false },
-      include: {
-        user: true,
-        brand: true,
-        model: true,
-        color: true,
-        currency: true,
-        address: true,
-        product_image: true,
+  async findAll(page: number = 1, limit: number = 10, search: string) {
+    const skip = (page - 1) * limit;
+
+    const [products, total] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
+        skip,
+        take: limit,
+        where: {
+          is_deleted: false,
+          title: { contains: search ? search : "", mode: "insensitive" },
+        },
+        include: {
+          user: true,
+          brand: true,
+          model: true,
+          color: true,
+          currency: true,
+          address: true,
+          product_image: true,
+        },
+      }),
+      this.prisma.product.count({
+        where: {
+          is_deleted: false,
+          title: { contains: search ? search : "", mode: "insensitive" },
+        },
+      }),
+    ]);
+    console.log(search);
+    // console.log(products);
+
+    return {
+      data: products,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / limit),
       },
-    });
+    };
   }
 
   async getProductBySlug(slug: string) {
@@ -167,6 +193,7 @@ export class ProductService {
   }
 
   async getProductByTitleQuery(query: string) {
+    console.log(query);
     return await this.prisma.product.findMany({
       where: {
         title: { contains: query, mode: "insensitive" },
