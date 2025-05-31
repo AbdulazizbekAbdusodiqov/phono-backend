@@ -3,7 +3,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { AdminGuard } from '../guards/admin.guard';
 import { ProductService } from './product.service';
-import { ApiBearerAuth, ApiConsumes, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from '../config/multer.config';
 import { UserGuard } from '../guards/user.guard';
@@ -101,20 +101,27 @@ export class ProductController {
     return this.productService.update(+id, updateProductDto);
   }
   
-  @ApiOperation({ summary: "Create product image" })
-  @ApiBearerAuth('phono') 
-  @UseGuards(UserProductGuard)
-  @UseGuards(UserGuard)
+ @ApiOperation({ summary: "Create product image" })
   @Post('image/:id')
+  @UseGuards(UserProductGuard, UserGuard)
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(
-    FileInterceptor('image', multerOptions)
-  )
-  cresteProductImage(
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('image', multerOptions))
+  createProductImage(
     @Param('id') id: number,
-    @UploadedFile() image: Express.Multer.File
+    @UploadedFile() image: Express.Multer.File,
   ) {
-    return this.productService.createProductImage(+id, image)
+    return this.productService.createProductImage(+id, image);
   }
 
   @ApiOperation({ summary: "Delete product image" })
