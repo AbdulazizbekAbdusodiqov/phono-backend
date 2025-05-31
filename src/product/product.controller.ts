@@ -1,6 +1,5 @@
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from '../config/multer.config';
 import {
   Controller,
   Get,
@@ -15,7 +14,8 @@ import {
   BadRequestException,
   InternalServerErrorException,
   Put,
-  UploadedFile,
+  UploadedFile
+} from '@nestjs/common'
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { AdminGuard } from "../guards/admin.guard";
