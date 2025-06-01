@@ -35,6 +35,9 @@ export class BrandService {
       where: {
         id,
       },
+      include:{
+        model: true
+      }
     });
     if (!brand) throw new NotFoundException(`Brend topilmadi (id: ${id})`);
     return brand;
