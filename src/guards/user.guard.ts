@@ -16,13 +16,12 @@ export class UserGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const req = context.switchToHttp().getRequest();
     const authHeader = req.headers.authorization;
-
     if (!authHeader) {
       throw new UnauthorizedException("Unauthorizard user");
     }
     const bearer = authHeader.split(" ")[0];
     const token = authHeader.split(" ")[1];
-
+    
     if (bearer != "Bearer" || !token) {
       throw new UnauthorizedException("Unauthorizard user");
     }
@@ -39,7 +38,7 @@ export class UserGuard implements CanActivate {
       if (!payload) {
         throw new UnauthorizedException("Unauthorizard user");
       }
-      req.user = payload;
+      req.user = payload;      
       return true;
     }
     return verify(token, this.jwtService);
