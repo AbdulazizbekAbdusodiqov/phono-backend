@@ -39,7 +39,7 @@ export class ProductController {
 
   @ApiOperation({ summary: "Create new product" })
   @ApiBearerAuth("phono")
-  @UseGuards(UserGuard)
+  // @UseGuards(UserGuard)
   @Post()
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(
@@ -75,9 +75,25 @@ export class ProductController {
   findAll(
     @Query("page") page = 1,
     @Query("limit") limit = 16,
-    @Query("search") search: string
+    @Query("search") search: string,
+    @Query("color") color: string,
+    @Query("memory") memory: string,
+    @Query("othermodel") othermodel: string,
+    @Query("brand") brand: string,
+    @Query("region") region: string,
+    @Query("condition") condition: boolean
   ) {
-    return this.productService.findAll(+page, +limit, search);
+    return this.productService.findAll(
+      +page,
+      +limit,
+      search,
+      color,
+      memory,
+      othermodel,
+      brand,
+      region,
+      condition
+    );
   }
 
   @ApiOperation({ summary: "Get product by title (query param)" })
