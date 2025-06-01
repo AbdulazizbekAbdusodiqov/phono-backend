@@ -73,17 +73,35 @@ export class ProductService {
     }
   }
 
-  async findAll(page: number = 1, limit: number = 10, search: string) {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+    search: string,
+    color: string,
+    memory: string,
+    othermodel: string,
+    brand: string,
+    region: string,
+    condition: boolean
+  ) {
     const skip = (page - 1) * limit;
+
+    const where: any = {
+      is_deleted: false,
+      ...(search && { title: { contains: search, mode: "insensitive" } }),
+      ...(color && { color: { name: color } }),
+      ...(othermodel && { other_model: othermodel }),
+      ...(memory && !isNaN(Number(memory)) && { ram: Number(memory) }),
+      ...(brand && { brand: { name: brand } }),
+      ...(region && { address: { region: { name: region } } }),
+      ...(typeof condition === "boolean" && { condition }),
+    };
 
     const [products, total] = await this.prisma.$transaction([
       this.prisma.product.findMany({
         skip,
         take: limit,
-        where: {
-          is_deleted: false,
-          title: { contains: search ? search : "", mode: "insensitive" },
-        },
+        where,
         include: {
           user: true,
           brand: true,
@@ -94,16 +112,11 @@ export class ProductService {
           product_image: true,
         },
       }),
-      this.prisma.product.count({
-        where: {
-          is_deleted: false,
-          title: { contains: search ? search : "", mode: "insensitive" },
-        },
-      }),
+      this.prisma.product.count({ where }),
     ]);
-    console.log(search);
-    // console.log(products);
 
+    console.log(products);
+    console.log(where);
     return {
       data: products,
       meta: {
