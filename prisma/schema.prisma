@@ -96,7 +96,6 @@ model Address {
   updatedAt DateTime @updatedAt
 
   @@map("address")
-  @@unique([region_id, district_id])
 }
 
 model Brand {
