@@ -115,8 +115,6 @@ export class ProductService {
       this.prisma.product.count({ where }),
     ]);
 
-    console.log(products);
-    console.log(where);
     return {
       data: products,
       meta: {

@@ -76,7 +76,12 @@ export class UserService {
   async findOne(id: number) {
     return await this.prisma.user.findUnique({
       where: { id },
-      include: { phone_number: true, address: true, email: true },
+      include: {
+        phone_number: true,
+        address: true,
+        email: true,
+        product: true,
+      },
     });
   }
 
