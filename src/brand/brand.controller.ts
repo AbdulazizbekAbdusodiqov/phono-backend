@@ -76,7 +76,7 @@ export class BrandController {
 
   @Put(":id")
   @ApiBearerAuth("phono")
-  // @UseGuards(AdminGuard)
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: "Update brand by ID" })
   @ApiBody({
     schema: {
