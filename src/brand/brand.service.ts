@@ -46,34 +46,46 @@ export class BrandService {
   async update(
     id: number,
     updateBrandDto: UpdateBrandDto,
-    image: Express.Multer.File
+    image?: Express.Multer.File
   ) {
     const brand = await this.prismaService.brand.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     });
-
-    if (!brand) throw new NotFoundException(`Brend topilmadi (id: ${id})`);
-
-    if (updateBrandDto.name && updateBrandDto.name !== brand.name) {
+  
+    if (!brand) {
+      throw new NotFoundException(`Brend topilmadi (id: ${id})`);
+    }
+  
+    if (
+      updateBrandDto.name &&
+      updateBrandDto.name !== brand.name
+    ) {
       const existingBrand = await this.prismaService.brand.findUnique({
-        where: {
-          name: updateBrandDto.name,
-        },
+        where: { name: updateBrandDto.name },
       });
-
-      if (existingBrand)
+  
+      if (existingBrand) {
         throw new BadRequestException(
           `"${updateBrandDto.name}" nomli brend allaqachon mavjud!`
         );
+      }
     }
-
+  
+    const data: any = {
+      ...updateBrandDto,
+    };
+  
+    // Agar rasm yuborilgan bo‘lsa, logoni yangilaymiz
+    if (image) {
+      data.logo = image.filename;
+    }
+  
     return this.prismaService.brand.update({
       where: { id },
-      data: { ...updateBrandDto, logo: image ? image.filename : null },
+      data,
     });
   }
+  
 
   async remove(id: number) {
     const brand = await this.prismaService.brand.findUnique({
