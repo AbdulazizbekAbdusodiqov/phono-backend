@@ -24,8 +24,8 @@ export class AddressService {
   }
 
   async findAddressByRegionIdAndDistrictId(region_id: number, district_id: number) {
-    const address = await this.prisma.address.findUnique({
-      where: { region_id_district_id: { region_id, district_id } },
+    const address = await this.prisma.address.findFirst({
+      where: {   region_id, district_id  },
     });
     return {
       message: "Succefully found",
