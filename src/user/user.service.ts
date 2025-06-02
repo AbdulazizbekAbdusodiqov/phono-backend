@@ -77,6 +77,7 @@ export class UserService {
     return await this.prisma.user.findUnique({
       where: { id },
       include: { phone_number: true, address: true, email: true, product:{ include:{product_image:true, brand:true, model:true, color:true,currency:true}} },
+
     });
   }
 
