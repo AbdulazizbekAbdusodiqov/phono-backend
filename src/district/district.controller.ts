@@ -29,8 +29,6 @@ export class DistrictController {
   }
   
   @Get()
-  @ApiBearerAuth('phono')
-  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Get all districts' })
   @ApiResponse({ status: 200, description: 'List of districts' })
   findAll() {
