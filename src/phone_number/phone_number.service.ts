@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePhoneNumberDto } from './dto/create-phone_number.dto';
 import { UpdatePhoneNumberDto } from './dto/update-phone_number.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -28,8 +28,7 @@ export class PhoneNumberService {
     return phoneNumber;
   }
 
-
-  async findByUser(id: number|string) {
+  async findByUser(id: number | string) {
     try {
       return await this.prismaService.phoneNumber.findMany({
         where: { user_id: Number(id) },
@@ -50,10 +49,17 @@ export class PhoneNumberService {
     });
   }
 
-  async remove(id: number) {
-    // Avval mavjudligini tekshirish
-    await this.findOne(id);
+  async remove(id: number, user_id: number) {
+    const phone = await this.prismaService.phoneNumber.findFirst({
+      where: { id, user_id },
+    });
 
-    return await this.prismaService.phoneNumber.delete({ where: { id } });
+    if (!phone) {
+      throw new ForbiddenException("You can't delete this phone number");
+    }
+
+    return await this.prismaService.phoneNumber.delete({
+      where: { id }, // faqat id kerak, chunki id unique bo'lishi kerak
+    });
   }
 }

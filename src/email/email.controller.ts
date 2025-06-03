@@ -8,7 +8,9 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { EmailService } from './email.service';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { UpdateEmailDto } from './dto/update-email.dto';
@@ -27,8 +29,9 @@ export class EmailController {
   @ApiOperation({ summary: 'Create a new email' })
   @ApiResponse({ status: 201, description: 'Email successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid data' })
-  create(@Body() createEmailDto: CreateEmailDto) {
-    return this.emailService.create(createEmailDto);
+  create(@Body() email: string, @Req() req: Request) {
+    const user_id = req.user.id;
+    return this.emailService.create(email, user_id);
   }
 
   @Get()
