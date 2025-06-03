@@ -61,7 +61,7 @@ export class PhoneNumberController {
   @ApiBearerAuth('phono')
   @UseGuards(UserGuard, UserSelfGuard)
   findPhonesByUser(@Param('id', ParseIntPipe) id: number) {
-    return this.phoneNumberService.findPhonesByUser(id);
+    return this.phoneNumberService.findByUser(id);
 
   }
 
