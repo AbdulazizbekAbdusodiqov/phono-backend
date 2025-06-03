@@ -10,6 +10,7 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
+
 import { PhoneNumberService } from './phone_number.service';
 import { CreatePhoneNumberDto } from './dto/create-phone_number.dto';
 import { UpdatePhoneNumberDto } from './dto/update-phone_number.dto';
@@ -62,7 +63,6 @@ export class PhoneNumberController {
   @UseGuards(UserGuard, UserSelfGuard)
   findPhonesByUser(@Param('id', ParseIntPipe) id: number) {
     return this.phoneNumberService.findByUser(id);
-
   }
 
   @Patch(':id')
@@ -83,8 +83,9 @@ export class PhoneNumberController {
   @ApiResponse({ status: 200, description: 'Phone number deleted' })
   @ApiResponse({ status: 404, description: 'Phone number not found' })
   @ApiBearerAuth('phono')
-  @UseGuards(UserGuard)
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.phoneNumberService.remove(id);
+  @UseGuards(UserGuard, UserSelfGuard)
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    const userId = req.user.id;
+    return this.phoneNumberService.remove(id, userId);
   }
 }

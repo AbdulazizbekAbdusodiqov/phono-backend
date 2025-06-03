@@ -7,8 +7,8 @@ import { PrismaService } from '../prisma/prisma.service';
 export class EmailService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createEmailDto: CreateEmailDto) {
-    return await this.prismaService.email.create({ data: createEmailDto });
+  async create(email: string, user_id: number) {
+    return await this.prismaService.email.create({ data: {email, user_id}} );
   }
 
   async findAll() {
