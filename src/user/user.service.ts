@@ -40,7 +40,7 @@ export class UserService {
         id: true,
         first_name: true,
         last_name: true,
-        brith_date: true,
+        birth_date: true,
         profile_img: true,
         is_active: true,
         is_premium: true,
@@ -76,7 +76,8 @@ export class UserService {
   async findOne(id: number) {
     return await this.prisma.user.findUnique({
       where: { id },
-      include: { phone_number: true, address: true, email: true },
+      include: { phone_number: true, address: true, email: true, product:{ include:{product_image:true, brand:true, model:true, color:true,currency:true}} },
+
     });
   }
 

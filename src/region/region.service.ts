@@ -35,7 +35,13 @@ export class RegionService
 
   findAll() 
   {
-    return this.prismaService.region.findMany();
+    return this.prismaService.region.findMany(
+      {
+        include:{
+          district: true
+        }
+      }
+    );
   }
 
   async findOne(id: number) 
@@ -46,7 +52,10 @@ export class RegionService
         where: 
         { 
           id 
-        } 
+        },
+        include:{
+          district: true
+        }
       }
     );
 

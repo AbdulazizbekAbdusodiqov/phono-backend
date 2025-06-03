@@ -126,7 +126,7 @@ export class AuthService {
         res: Response
     ): Promise<ResponseFields> {
         const decodedToken = await this.jwtService.decode(refreshToken);        
-        if (id != decodedToken["id"]) {
+        if (id != decodedToken!["id"]) {
             throw new BadRequestException("Not allowed");
         }
 

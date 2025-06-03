@@ -15,19 +15,19 @@ export class ProductService {
   constructor(private readonly prisma: PrismaService) {}
   async create(createProductDto: CreateProductDto, files: any) {
     try {
-      // if (createProductDto.user_id) {
-      //   const userExists = await this.prisma.user.findUnique({
-      //     where: { id: createProductDto.user_id },
-      //   });
+      if (createProductDto.user_id) {
+        const userExists = await this.prisma.user.findUnique({
+          where: { id: createProductDto.user_id },
+        });
 
-      //   if (!userExists) {
-      //     throw new NotFoundException(`User with ID ${createProductDto.user_id} does not exist`);
-      //   }
-      // }
+        if (!userExists) {
+          throw new NotFoundException(`User with ID ${createProductDto.user_id} does not exist`);
+        }
+      }
 
-      console.log("hellomaleykum");
-      console.log(createProductDto);
-
+      if(createProductDto.model_id == 0){
+        delete createProductDto.model_id
+      }
       const newProduct = await this.prisma.product.create({
         data: createProductDto,
       });
@@ -73,19 +73,56 @@ export class ProductService {
     }
   }
 
-  async findAll() {
-    return await this.prisma.product.findMany({
-      where: { is_deleted: false },
-      include: {
-        user: true,
-        brand: true,
-        model: true,
-        color: true,
-        currency: true,
-        address: true,
-        product_image: true,
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+    search: string,
+    color: string,
+    memory: string,
+    othermodel: string,
+    brand: string,
+    region: string,
+    condition: boolean
+  ) {
+    const skip = (page - 1) * limit;
+
+    const where: any = {
+      is_deleted: false,
+      ...(search && { title: { contains: search, mode: "insensitive" } }),
+      ...(color && { color: { name: color } }),
+      ...(othermodel && { other_model: othermodel }),
+      ...(memory && !isNaN(Number(memory)) && { ram: Number(memory) }),
+      ...(brand && { brand: { name: brand } }),
+      ...(region && { address: { region: { name: region } } }),
+      ...(typeof condition === "boolean" && { condition }),
+    };
+
+    const [products, total] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
+        skip,
+        take: limit,
+        where,
+        include: {
+          user: true,
+          brand: true,
+          model: true,
+          color: true,
+          currency: true,
+          address: true,
+          product_image: true,
+        },
+      }),
+      this.prisma.product.count({ where }),
+    ]);
+
+    return {
+      data: products,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / limit),
       },
-    });
+    };
   }
 
   async getProductBySlug(slug: string) {
@@ -167,6 +204,7 @@ export class ProductService {
   }
 
   async getProductByTitleQuery(query: string) {
+    console.log(query);
     return await this.prisma.product.findMany({
       where: {
         title: { contains: query, mode: "insensitive" },

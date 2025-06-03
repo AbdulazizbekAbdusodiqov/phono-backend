@@ -26,29 +26,28 @@ model Admin {
 }
 
 model User {
-  id                   Int       @id @default(autoincrement())
+  id                   Int             @id @default(autoincrement())
   first_name           String
   last_name            String
-  brith_date           DateTime?
   password             String
   profile_img          String?
-  is_active            Boolean   @default(true)
-  is_premium           Boolean   @default(false)
+  is_active            Boolean         @default(true)
+  is_premium           Boolean         @default(false)
+  birth_date           DateTime?
   hashed_refresh_token String?
-  last_online          DateTime  @default(now())
-  balance              Decimal   @default(0)
-
-  address       Address[]
-  phone_number  PhoneNumber[]
-  payment       Payment[]
-  product       Product[]
-  senderChats   Chat[]        @relation("senderChats")
-  receiverChats Chat[]        @relation("receiverChats")
-  messages      Message[]
-  slug          String?       @unique
-  email         Email[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  last_online          DateTime        @default(now())
+  balance              Decimal         @default(0)
+  address              Address[]
+  phone_number         PhoneNumber[]
+  payment              Payment[]
+  product              Product[]
+  slug                 String?         @unique
+  email                Email[]
+  messages             Message[]
+  chatrooms            Chatroom[]      @relation("ChatroomUsers")
+  ChatroomUsers        ChatroomUsers[]
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
 
   @@map("user")
 }
@@ -102,6 +101,7 @@ model Address {
 model Brand {
   id      Int       @id @default(autoincrement())
   name    String    @unique
+  logo    String
   model   Model[]
   product Product[]
 
@@ -127,6 +127,7 @@ model Model {
 model Color {
   id      Int       @id @default(autoincrement())
   name    String    @unique
+  code    String?
   product Product[]
 
   createdAt DateTime @default(now())
@@ -271,30 +272,43 @@ model Otp {
   @@map("otp")
 }
 
-model Chat {
-  id       Int  @id @default(autoincrement())
-  sender   User @relation("senderChats", fields: [senderId], references: [id])
-  senderId Int
+model Chatroom {
+  id            Int             @id @default(autoincrement())
+  name          String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  users         User[]          @relation("ChatroomUsers")
+  messages      Message[]
+  ChatroomUsers ChatroomUsers[]
+}
 
-  receiver   User @relation("receiverChats", fields: [receiverId], references: [id])
-  receiverId Int
-
-  messages  Message[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  @@unique([senderId, receiverId])
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  FILE
 }
 
 model Message {
-  id       Int    @id @default(autoincrement())
-  text     String
-  sender   User   @relation(fields: [senderId], references: [id])
-  senderId Int
+  id         Int          @id @default(autoincrement())
+  type       MessageType?
+  content    String
+  imageUrl   String?
+  userId     Int
+  chatroomId Int
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chatroom   Chatroom     @relation(fields: [chatroomId], references: [id], onDelete: Cascade)
+}
 
-  chat   Chat @relation(fields: [chatId], references: [id])
-  chatId Int
+model ChatroomUsers {
+  chatroomId Int
+  userId     Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chatroom   Chatroom @relation(fields: [chatroomId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@id([chatroomId, userId])
 }

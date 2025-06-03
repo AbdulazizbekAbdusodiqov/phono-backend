@@ -43,9 +43,9 @@ export class UserAuthService {
     };
   }
 
-  async signUp(dto: SingUpUserDto): Promise<IResponse> {
+  async signUp(dto: SingUpUserDto, res: Response): Promise<IResponse> {
     // check user exist
-
+    const { phone_number, first_name, last_name } = dto;
     const isExist = await this.userService.findUserByPhoneNumber(
       dto.phone_number
     );
@@ -57,17 +57,37 @@ export class UserAuthService {
     const is_verified = await decode(dto.verified_key);
     const details = JSON.parse(is_verified);
 
-
     if (details.phone_number != dto.phone_number) {
       throw new ForbiddenException("Please verify your phone number");
     }
 
     const newUser = await this.userService.create(dto);
 
+    const { accessToken, refreshToken } = await this.generateTokens({
+      id: newUser.id,
+      phone_number,
+    });
+
+    const hashed_refresh_token = await BcryptEncryption.encrypt(refreshToken);
+    await this.userService.updateUserRefreshToken(
+      newUser.id,
+      hashed_refresh_token
+    );
+
+    res.cookie("refresh_token", refreshToken, {
+      maxAge: 15 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+
     return {
+      data: {
+        id: newUser.id,
+        phone_number,
+        full_name: `${first_name} ${last_name}`,
+        accessToken,
+      },
+      message: "Succfully registered",
       status_code: 200,
-      message: "Succesfully registred",
-      data: newUser,
     };
   }
 
@@ -113,6 +133,9 @@ export class UserAuthService {
 
     return {
       data: {
+        id: user.id,
+        phone_number,
+        full_name: `${user.user.first_name} ${user.user.last_name}`,
         accessToken,
       },
       message: "Succfully login",
