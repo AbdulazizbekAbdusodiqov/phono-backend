@@ -15,19 +15,19 @@ export class ProductService {
   constructor(private readonly prisma: PrismaService) {}
   async create(createProductDto: CreateProductDto, files: any) {
     try {
-      // if (createProductDto.user_id) {
-      //   const userExists = await this.prisma.user.findUnique({
-      //     where: { id: createProductDto.user_id },
-      //   });
+      if (createProductDto.user_id) {
+        const userExists = await this.prisma.user.findUnique({
+          where: { id: createProductDto.user_id },
+        });
 
-      //   if (!userExists) {
-      //     throw new NotFoundException(`User with ID ${createProductDto.user_id} does not exist`);
-      //   }
-      // }
+        if (!userExists) {
+          throw new NotFoundException(`User with ID ${createProductDto.user_id} does not exist`);
+        }
+      }
 
-      console.log("hellomaleykum");
-      console.log(createProductDto);
-
+      if(createProductDto.model_id == 0){
+        delete createProductDto.model_id
+      }
       const newProduct = await this.prisma.product.create({
         data: createProductDto,
       });
