@@ -40,11 +40,11 @@ export class AddressController {
   }
 
   @UseGuards(UserGuard)
-  @Get()
+  @Get("byUser/:id")
   @ApiOperation({ summary: "Get all addresses" })
   @ApiResponse({ status: 200, description: "List of all addresses." })
-  findAll(@GetCurrentUserId() userId: number) {
-    return this.addressService.findAll(userId);
+  findAll(@GetCurrentUserId() id: number) {
+    return this.addressService.findAll(id);
   }
 
   @Get(":id")

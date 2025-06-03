@@ -23,6 +23,14 @@ export class EmailService {
     return email;
   }
 
+  async findEmailsByUser(id: number) {
+    const email = await this.prismaService.email.findMany({ where: { id } });
+    if (!email) {
+      throw new NotFoundException(`Email with ID ${id} not found`);
+    }
+    return email;
+  }
+
   async update(id: number, updateEmailDto: UpdateEmailDto) {
     // Avval mavjudligini tekshirish
     await this.findOne(id);
