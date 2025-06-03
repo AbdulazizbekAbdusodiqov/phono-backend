@@ -71,7 +71,7 @@ export class ChatroomResolver {
     @Args('chatroomId') chatroomId: number,
     @Context() context: { req: Request },
   ) {
-    if(context.req.user?.id){
+    if (context.req.user?.id) {
       const user = await this.userService.getUser(context.req.user?.id);
       await this.pubSub.publish(`userStartedTyping.${chatroomId}`, {
         user,
@@ -88,9 +88,9 @@ export class ChatroomResolver {
     @Args('chatroomId') chatroomId: number,
     @Context() context: { req: Request },
   ) {
-    if(context.req.user?.id){
+    if (context.req.user?.id) {
       const user = await this.userService.getUser(context.req.user.id);
-  
+
       await this.pubSub.publish(`userStoppedTyping.${chatroomId}`, {
         user,
         typingUserId: user?.id,
@@ -111,25 +111,21 @@ export class ChatroomResolver {
   ) {
     let imagePath: null | string = null;
     if (image) imagePath = await this.chatroomService.saveImage(image);
-    if(imagePath && context.req.user?.id){
-      const newMessage = await this.chatroomService.sendMessage(
-        chatroomId,
-        content,
-        context.req.user.id,
-        imagePath,
-      );
-      await this.pubSub
-        .publish(`newMessage.${chatroomId}`, { newMessage })
-        .then((res) => {
-          console.log('published', res);
-        })
-        .catch((err) => {
-          console.log('err', err);
-        });
-  
-      return newMessage;
-    }
-    return null;
+    const newMessage = await this.chatroomService.sendMessage(
+      chatroomId,
+      content,
+      context.req.user.id,
+      imagePath,
+    );
+    await this.pubSub
+      .publish(`newMessage.${chatroomId}`, { newMessage })
+      .then((res) => {
+        console.log('published', res);
+      })
+      .catch((err) => {
+        console.log('err', err);
+      });
+    return newMessage;
   }
 
   @UseFilters(GraphQLErrorFilter)
@@ -139,7 +135,7 @@ export class ChatroomResolver {
     @Args('name') name: string,
     @Context() context: { req: Request },
   ) {
-    if(context.req.user?.id)
+    if (context.req.user?.id)
       return this.chatroomService.createChatroom(name, context.req.user.id);
     return null;
   }
@@ -152,15 +148,22 @@ export class ChatroomResolver {
     return this.chatroomService.addUsersToChatroom(chatroomId, userIds);
   }
 
+  @UseGuards(GraphqlAuthGuard)
   @Query(() => [Chatroom])
-  async getChatroomsForUser(@Args('userId') userId: number) {
-    return this.chatroomService.getChatroomsForUser(userId);
+  async getChatroomsForUser(
+    @Context() context: { req: Request }
+  ) {
+    return this.chatroomService.getChatroomsForUser(context.req.user.id);
   }
 
+  @UseGuards(GraphqlAuthGuard)
   @Query(() => [Message])
-  async getMessagesForChatroom(@Args('chatroomId') chatroomId: number) {
+  async getMessagesForChatroom(
+    @Args('chatroomId') chatroomId: number,
+  ) {
     return this.chatroomService.getMessagesForChatroom(chatroomId);
   }
+
   @Mutation(() => String)
   async deleteChatroom(@Args('chatroomId') chatroomId: number) {
     await this.chatroomService.deleteChatroom(chatroomId);

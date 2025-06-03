@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePhoneNumberDto } from './dto/create-phone_number.dto';
 import { UpdatePhoneNumberDto } from './dto/update-phone_number.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { Request } from 'express';
 
 @Injectable()
 export class PhoneNumberService {
@@ -25,6 +26,17 @@ export class PhoneNumberService {
       throw new NotFoundException(`Phone number with ID ${id} not found`);
     }
     return phoneNumber;
+  }
+
+  async findByUser(id: number|string) {
+    try {
+      return await this.prismaService.phoneNumber.findMany({
+        where: { user_id: Number(id) },
+      });
+    } catch (error) {
+      console.error('Error in findByUser:', error);
+      throw error;
+    }
   }
 
   async update(id: number, updatePhoneNumberDto: UpdatePhoneNumberDto) {

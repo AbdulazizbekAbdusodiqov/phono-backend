@@ -23,6 +23,17 @@ export class AddressService {
     });
   }
 
+  async findAddressByRegionIdAndDistrictId(region_id: number, district_id: number) {
+    const address = await this.prisma.address.findFirst({
+      where: {   region_id, district_id  },
+    });
+    return {
+      message: "Succefully found",
+      data: address,
+      status_code: 200,
+    };
+  }
+
   async findOne(id: number) {
     const address = await this.prisma.address.findUnique({
       where: { id },

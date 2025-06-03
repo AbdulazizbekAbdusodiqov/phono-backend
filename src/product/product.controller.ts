@@ -1,23 +1,37 @@
-import { Controller, Get, Post, Body, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFiles, BadRequestException, InternalServerErrorException, Put, UploadedFile } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { AdminGuard } from '../guards/admin.guard';
-import { ProductService } from './product.service';
-import { ApiBearerAuth, ApiConsumes, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from '../config/multer.config';
-import { UserGuard } from '../guards/user.guard';
-import { UserProductGuard } from '../guards/user-product.guard';
-import { UserSelfGuard } from '../guards/user-self.guard';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  UseInterceptors,
+  UploadedFiles,
+  BadRequestException,
+  InternalServerErrorException,
+  Put,
+  UploadedFile
+} from '@nestjs/common'
+import { CreateProductDto } from "./dto/create-product.dto";
+import { UpdateProductDto } from "./dto/update-product.dto";
+import { AdminGuard } from "../guards/admin.guard";
+import { ProductService } from "./product.service";
+import { multerOptions } from "../config/multer.config";
+import { UserGuard } from "../guards/user.guard";
+import { UserProductGuard } from "../guards/user-product.guard";
+import { UserSelfGuard } from "../guards/user-self.guard";
 
-
-@Controller('product')
+@Controller("product")
 export class ProductController {
-  constructor(private readonly productService: ProductService) { }
+  constructor(private readonly productService: ProductService) {}
 
   @ApiOperation({ summary: "Create new product" })
-  @ApiBearerAuth('phono') 
-  @UseGuards(UserGuard)
+  @ApiBearerAuth("phono")
+  // @UseGuards(UserGuard)
   @Post()
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(
@@ -34,104 +48,138 @@ export class ProductController {
       return await this.productService.create(createProductDto, files);
     } catch (error) {
       // Handle Prisma foreign key constraint errors
-      if (error.code === 'P2003') {
-        throw new BadRequestException(`Foreign key constraint failed: ${error.meta?.field || 'Unknown field'}`);
+      if (error.code === "P2003") {
+        throw new BadRequestException(
+          `Foreign key constraint failed: ${error.meta?.field || "Unknown field"}`
+        );
       }
-      throw new InternalServerErrorException(error.message || 'An unexpected error occurred');
+      throw new InternalServerErrorException(
+        error.message || "An unexpected error occurred"
+      );
     }
   }
 
   @ApiOperation({ summary: "Get all products" })
+  @ApiQuery({ name: "page", required: false, type: Number })
+  @ApiQuery({ name: "limit", required: false, type: Number })
+  @ApiQuery({ name: "search", required: false, type: String })
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  findAll(
+    @Query("page") page = 1,
+    @Query("limit") limit = 16,
+    @Query("search") search: string,
+    @Query("color") color: string,
+    @Query("memory") memory: string,
+    @Query("othermodel") othermodel: string,
+    @Query("brand") brand: string,
+    @Query("region") region: string,
+    @Query("condition") condition: boolean
+  ) {
+    return this.productService.findAll(
+      +page,
+      +limit,
+      search,
+      color,
+      memory,
+      othermodel,
+      brand,
+      region,
+      condition
+    );
+  }
+
+  @ApiOperation({ summary: "Get product by title (query param)" })
+  @Get("search")
+  getProductByTitleQuery(@Query("search") search: string) {
+    return this.productService.getProductByTitleQuery(search);
   }
 
   @ApiOperation({ summary: "Get product by id" })
-  @Get(':id')
-  findOne(@Param('id') id: number) {
+  @Get(":id")
+  findOne(@Param("id") id: number) {
     return this.productService.findOne(+id);
   }
 
   @ApiOperation({ summary: "Get user's products" })
-  @Get('user/:id')
-  @ApiBearerAuth('phono') 
+  @Get("user/:id")
+  @ApiBearerAuth("phono")
   @UseGuards(UserSelfGuard)
   @UseGuards(UserGuard)
-  getProductByUserId(@Param('id') id: number) {
+  getProductByUserId(@Param("id") id: number) {
     return this.productService.getProductByUserId(+id);
   }
 
-  @ApiOperation({ summary: "Get product by title (query param)" })
-  @Get('search')
-  getProductByTitleQuery(@Query('search') search: string) {
-    return this.productService.getProductByTitleQuery(search);
-  }
-
   @ApiOperation({ summary: "Get pending products" })
-  @ApiBearerAuth('phono') 
+  @ApiBearerAuth("phono")
   @UseGuards(AdminGuard)
-  @Get('pending')
+  @Get("pending")
   getPendingProducts() {
     return this.productService.getPendingProducts();
   }
 
   @ApiOperation({ summary: "Approve product" })
-  @ApiBearerAuth('phono') 
+  @ApiBearerAuth("phono")
   @UseGuards(AdminGuard)
-  @Get('approved/:id')
-  approveProduct(@Param('id') id: number) {
+  @Get("approved/:id")
+  approveProduct(@Param("id") id: number) {
     return this.productService.approvProduct(+id);
   }
 
   @ApiOperation({ summary: "Reject product" })
-  @ApiBearerAuth('phono') 
+  @ApiBearerAuth("phono")
   @UseGuards(AdminGuard)
-  @Get('rejected/:id')
-  rejectProduct(@Param('id') id: number) {
+  @Get("rejected/:id")
+  rejectProduct(@Param("id") id: number) {
     return this.productService.rejectProduct(+id);
   }
 
   @ApiOperation({ summary: "Update product" })
-  @ApiBearerAuth('phono') 
+  @ApiBearerAuth("phono")
   @UseGuards(UserProductGuard)
   @UseGuards(UserGuard)
-  @Put(':id')
-  update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto) {
+  @Put(":id")
+  update(@Param("id") id: number, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(+id, updateProductDto);
   }
   
-  @ApiOperation({ summary: "Create product image" })
-  @ApiBearerAuth('phono') 
-  @UseGuards(UserProductGuard)
-  @UseGuards(UserGuard)
+ @ApiOperation({ summary: "Create product image" })
   @Post('image/:id')
+  @UseGuards(UserProductGuard, UserGuard)
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(
-    FileInterceptor('image', multerOptions)
-  )
-  cresteProductImage(
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('image', multerOptions))
+  createProductImage(
     @Param('id') id: number,
-    @UploadedFile() image: Express.Multer.File
+    @UploadedFile() image: Express.Multer.File,
   ) {
-    return this.productService.createProductImage(+id, image)
+    return this.productService.createProductImage(+id, image);
   }
 
   @ApiOperation({ summary: "Delete product image" })
-  @ApiBearerAuth('phono') 
+  @ApiBearerAuth("phono")
   @UseGuards(UserProductGuard)
   @UseGuards(UserGuard)
-  @Delete('image/:id')
-  deleteProductImage(@Param('id') id: number) {
+  @Delete("image/:id")
+  deleteProductImage(@Param("id") id: number) {
     return this.productService.deleteProductImage(+id);
   }
-  
-  @ApiBearerAuth('phono') 
+
+  @ApiBearerAuth("phono")
   @UseGuards(UserProductGuard)
   @UseGuards(UserGuard)
   @ApiOperation({ summary: " Delete product" })
-  @Delete(':id')
-  remove(@Param('id') id: number) {
+  @Delete(":id")
+  remove(@Param("id") id: number) {
     return this.productService.remove(+id);
   }
 }

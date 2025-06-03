@@ -57,6 +57,13 @@ export class UserService {
           not: userId,
         },
       },
+      include: {
+        phone_number: {
+          where: {
+            is_main: true,
+          },
+        },
+      }
     });
   }
 

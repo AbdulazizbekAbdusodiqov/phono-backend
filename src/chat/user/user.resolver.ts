@@ -8,7 +8,6 @@ import { createWriteStream } from 'fs';
 import { join } from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
-import { profile } from 'console';
 @Resolver()
 export class UserResolver {
   constructor(private readonly userService: UserService) { }
@@ -35,7 +34,7 @@ export class UserResolver {
     const { createReadStream, filename } = await file;
     const uniqueFilename = `${uuidv4()}_${filename}`;
     const imagePath = join(process.cwd(), 'public', 'images', uniqueFilename);
-    const imageUrl = `${process.env.APP_URL}/images/${uniqueFilename}`;
+    const imageUrl = `${process.env.API_URL}/images/${uniqueFilename}`;
     const readStream = createReadStream();
     readStream.pipe(createWriteStream(imagePath));
     return imageUrl;
@@ -49,6 +48,12 @@ export class UserResolver {
   ) {
     if (context.req.user)
       return this.userService.searchUsers(first_name, context.req.user?.id);
+  }
+
+  @UseGuards(GraphqlAuthGuard)
+  @Query(() => User)
+  async getUser(@Context() context: { req: Request }) {
+    return this.userService.getUser(context.req.user.id);
   }
 
   @UseGuards(GraphqlAuthGuard)

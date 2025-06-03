@@ -6,9 +6,9 @@ export class User {
   id?: number;
 
   @Field()
-  first_name?: string;
+  first_name: string;
 
-  @Field({ nullable: true })
+  @Field({nullable: true})
   last_name?: string;
 
   @Field({ nullable: true })
@@ -17,7 +17,7 @@ export class User {
   @Field({ nullable: true })
   profile_img?: string;
 
-  @Field()
+  @Field({nullable: true})
   phone_number?: string;
 
   @Field({ nullable: true })
