@@ -8,6 +8,7 @@ export class UserSelfGuard implements CanActivate {
         context: ExecutionContext,
     ): boolean | Promise<boolean> | Observable<boolean> {
         const req = context.switchToHttp().getRequest();
+        console.log("req: ", req);
 
         if(req.params.id != req.user.id){
             throw new ForbiddenException()
