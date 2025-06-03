@@ -50,6 +50,16 @@ export class EmailController {
     return this.emailService.findOne(id);
   }
 
+  @Get('byUser/:id')
+  @ApiOperation({ summary: 'Get emails of user by ID' })
+  @ApiResponse({ status: 200, description: 'Email found' })
+  @ApiResponse({ status: 404, description: 'Email not found' })
+  @ApiBearerAuth('phono')
+  @UseGuards(UserGuard, UserSelfGuard)
+  findEmailsByUser(@Param('id', ParseIntPipe) id: number) {
+    return this.emailService.findEmailsByUser(id);
+  }
+
   @Patch(':id')
   @ApiOperation({ summary: 'Update an email by ID' })
   @ApiResponse({ status: 200, description: 'Email updated' })

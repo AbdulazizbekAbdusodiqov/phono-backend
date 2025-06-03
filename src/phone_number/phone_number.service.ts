@@ -27,6 +27,16 @@ export class PhoneNumberService {
     return phoneNumber;
   }
 
+  async findPhonesByUser(id: number) {
+    const phoneNumber = await this.prismaService.phoneNumber.findMany({
+      where: { id },
+    });
+    if (!phoneNumber) {
+      throw new NotFoundException(`Phone number with ID ${id} not found`);
+    }
+    return phoneNumber;
+  }
+
   async update(id: number, updatePhoneNumberDto: UpdatePhoneNumberDto) {
     // Avval mavjudligini tekshirish
     await this.findOne(id);

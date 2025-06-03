@@ -53,6 +53,16 @@ export class PhoneNumberController {
     return this.phoneNumberService.findOne(id);
   }
 
+  @Get('byUser/:id')
+  @ApiOperation({ summary: 'Get phones number by ID' })
+  @ApiResponse({ status: 200, description: 'Phone number found' })
+  @ApiResponse({ status: 404, description: 'Phone number not found' })
+  @ApiBearerAuth('phono')
+  @UseGuards(UserGuard, UserSelfGuard)
+  findPhonesByUser(@Param('id', ParseIntPipe) id: number) {
+    return this.phoneNumberService.findPhonesByUser(id);
+  }
+
   @Patch(':id')
   @ApiOperation({ summary: 'Update a phone number by ID' })
   @ApiResponse({ status: 200, description: 'Phone number updated' })
