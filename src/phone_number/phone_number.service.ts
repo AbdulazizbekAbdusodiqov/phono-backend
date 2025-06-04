@@ -54,6 +54,8 @@ export class PhoneNumberService {
       where: { id: phoneId, user_id: id },
     });
 
+    console.log("phone: ->", phone);
+
     if (!phone) {
       throw new ForbiddenException("You can't delete this phone number");
     }
