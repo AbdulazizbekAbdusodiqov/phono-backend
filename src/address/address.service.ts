@@ -23,15 +23,14 @@ export class AddressService {
     });
   }
 
-  async findAddressByRegionIdAndDistrictId(region_id: number, district_id: number) {
+  async findAddressByRegionIdAndDistrictId(region_id: number, district_id: number,user_id:number) {
     const address = await this.prisma.address.findFirst({
-      where: {   region_id, district_id  },
+      where: {   region_id, district_id, user_id  },
     });
-    return {
-      message: "Succefully found",
-      data: address,
-      status_code: 200,
-    };
+    if(!address){
+      throw new NotFoundException(`Address not found`);
+    }
+    return address;
   }
 
   async findOne(id: number) {
