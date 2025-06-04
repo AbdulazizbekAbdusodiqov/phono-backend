@@ -61,7 +61,7 @@ export class PhoneNumberService {
     }
 
     const result = await this.prismaService.phoneNumber.delete({
-      where: { id }, // faqat id kerak, chunki id unique bo'lishi kerak
+      where: { id: phoneId }, // faqat id kerak, chunki id unique bo'lishi kerak
     });
 
     console.log("result: phone_number: ", result);

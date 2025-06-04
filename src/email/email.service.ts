@@ -53,7 +53,7 @@ export class EmailService {
     }
 
     const result = await this.prismaService.email.delete({
-      where: { id }, // faqat id kerak, chunki id unique bo'lishi kerak
+      where: { id: emailId }, // faqat id kerak, chunki id unique bo'lishi kerak
     });
     console.log("result: email: ", result)
     return result;
