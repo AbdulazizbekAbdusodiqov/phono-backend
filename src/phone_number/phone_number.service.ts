@@ -49,9 +49,9 @@ export class PhoneNumberService {
     });
   }
 
-  async remove(id: number, user_id: number) {
+  async remove(id: number, phoneId: number) {
     const phone = await this.prismaService.phoneNumber.findFirst({
-      where: { id, user_id },
+      where: { id: phoneId, user_id: id },
     });
 
     if (!phone) {

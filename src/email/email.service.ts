@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { UpdateEmailDto } from './dto/update-email.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -7,8 +7,8 @@ import { PrismaService } from '../prisma/prisma.service';
 export class EmailService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(email: string, user_id: number) {
-    return await this.prismaService.email.create({ data: {email, user_id}} );
+  async create(createEmailDto: CreateEmailDto) {
+    return await this.prismaService.email.create({ data: createEmailDto });
   }
 
   async findAll() {
@@ -24,7 +24,7 @@ export class EmailService {
   }
 
   async findEmailsByUser(id: number) {
-    const email = await this.prismaService.email.findMany({ where: { id } });
+    const email = await this.prismaService.email.findMany ({ where: { id } });
     if (!email) {
       throw new NotFoundException(`Email with ID ${id} not found`);
     }
@@ -41,10 +41,17 @@ export class EmailService {
     });
   }
 
-  async remove(id: number) {
-    // Avval mavjudligini tekshirish
-    await this.findOne(id);
+  async remove(id: number, emailId: number) {
+    const email = await this.prismaService.email.findFirst({
+      where: { id: emailId, user_id: id },
+    });
 
-    return await this.prismaService.email.delete({ where: { id } });
+    if (!email) {
+      throw new ForbiddenException("You can't delete this email");
+    }
+
+    return await this.prismaService.email.delete({
+      where: { id }, // faqat id kerak, chunki id unique bo'lishi kerak
+    });
   }
 }
