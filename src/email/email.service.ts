@@ -46,12 +46,16 @@ export class EmailService {
       where: { id: emailId, user_id: id },
     });
 
+    console.log("email: ->", email);
+
     if (!email) {
       throw new ForbiddenException("You can't delete this email");
     }
 
-    return await this.prismaService.email.delete({
+    const result = await this.prismaService.email.delete({
       where: { id }, // faqat id kerak, chunki id unique bo'lishi kerak
     });
+    console.log("result: email: ", result)
+    return result;
   }
 }
