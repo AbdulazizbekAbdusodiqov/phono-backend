@@ -65,7 +65,7 @@ export class AddressService {
     }
 
     const result = await this.prisma.address.delete({
-      where: { id }, // faqat id kerak, chunki id unique bo'lishi kerak
+      where: { id: addressId }, // faqat id kerak, chunki id unique bo'lishi kerak
     });
     console.log("result: address: ", result);
     return result
