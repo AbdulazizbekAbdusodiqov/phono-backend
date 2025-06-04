@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateAddressDto } from "./dto/create-address.dto";
 import { UpdateAddressDto } from "./dto/update-address.dto";
 import { PrismaService } from "../prisma/prisma.service";
@@ -53,15 +53,17 @@ export class AddressService {
     return { message: "Succefullt updated", data: {}, status_code: 200 };
   }
 
-  async remove(id: number) {
-    await this.findOne(id);
+  async remove(id: number, addressId: number) {
+    const address = await this.prisma.address.findFirst({
+      where: { id: addressId, user_id: id },
+    });
 
-    await this.prisma.address.delete({ where: { id } });
+    if (!address) {
+      throw new ForbiddenException("You can't delete this address");
+    }
 
-    return {
-      message: "Succesfully deleted",
-      status_code: 200,
-      data: {},
-    };
+    return await this.prisma.address.delete({
+      where: { id }, // faqat id kerak, chunki id unique bo'lishi kerak
+    });
   }
 }

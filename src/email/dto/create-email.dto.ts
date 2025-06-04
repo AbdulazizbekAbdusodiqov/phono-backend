@@ -15,7 +15,6 @@ import { Transform, Type } from 'class-transformer';
 export class CreateEmailDto {
   @ApiProperty({ required: false })
   @IsNumber()
-  @IsOptional()
   @Type(() => Number)
   user_id: number;
 

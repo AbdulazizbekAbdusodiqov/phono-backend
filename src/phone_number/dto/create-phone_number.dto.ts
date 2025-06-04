@@ -11,7 +11,6 @@ import {
 export class CreatePhoneNumberDto {
   @ApiProperty({ required: false })
   @IsNumber()
-  @IsOptional()
   @Type(() => Number)
   user_id: number;
 

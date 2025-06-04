@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 
 import { PhoneNumberService } from './phone_number.service';
@@ -36,6 +37,24 @@ export class PhoneNumberController {
     return this.phoneNumberService.create(createPhoneNumberDto);
   }
 
+  @Post('/byUser/:id')
+  @ApiOperation({ summary: 'Create a new phone number' })
+  @ApiResponse({
+    status: 201,
+    description: 'Phone number successfully created',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid data' })
+  @UseGuards(UserGuard, UserSelfGuard)
+  createByUser(
+    @Body() createPhoneNumberDto: CreatePhoneNumberDto,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.phoneNumberService.create({
+      ...createPhoneNumberDto,
+      user_id: id,
+    });
+  }
+
   @Get()
   @ApiOperation({ summary: 'Get all phone numbers' })
   @ApiResponse({ status: 200, description: 'List of phone numbers' })
@@ -50,7 +69,7 @@ export class PhoneNumberController {
   @ApiResponse({ status: 200, description: 'Phone number found' })
   @ApiResponse({ status: 404, description: 'Phone number not found' })
   @ApiBearerAuth('phono')
-  @UseGuards(UserGuard)
+  @UseGuards(UserGuard, UserSelfGuard)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.phoneNumberService.findOne(id);
   }
@@ -84,8 +103,16 @@ export class PhoneNumberController {
   @ApiResponse({ status: 404, description: 'Phone number not found' })
   @ApiBearerAuth('phono')
   @UseGuards(UserGuard, UserSelfGuard)
-  remove(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
-    const userId = req.user.id;
-    return this.phoneNumberService.remove(id, userId);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('phoneId') phoneId: number,
+  ) {
+    return this.phoneNumberService.reawait instance.delete(`/phone-number/${id}?phoneId=${phone_id}`, {
+      headers: {
+        Authorization: `Bearer ${JSON.parse(
+          localStorage.getItem('accessToken') || '',
+        )}`,
+      },
+    });move(id, phoneId);
   }
 }

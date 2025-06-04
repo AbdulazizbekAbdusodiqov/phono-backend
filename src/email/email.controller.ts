@@ -8,9 +8,8 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
-  Req,
+  Query,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { EmailService } from './email.service';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { UpdateEmailDto } from './dto/update-email.dto';
@@ -29,9 +28,19 @@ export class EmailController {
   @ApiOperation({ summary: 'Create a new email' })
   @ApiResponse({ status: 201, description: 'Email successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid data' })
-  create(@Body() email: string, @Req() req: Request) {
-    const user_id = req.user.id;
-    return this.emailService.create(email, user_id);
+  create(@Body() createEmailDto: CreateEmailDto) {
+    return this.emailService.create(createEmailDto);
+  }
+
+  @Post('/byUser/:id')
+  @ApiOperation({ summary: 'Create a new email' })
+  @ApiResponse({ status: 201, description: 'Email successfully created' })
+  @ApiResponse({ status: 400, description: 'Invalid data' })
+  createByUser(
+    @Body() createEmailDto: CreateEmailDto,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.emailService.create({...createEmailDto, user_id: id});
   }
 
   @Get()
@@ -82,7 +91,7 @@ export class EmailController {
   @ApiResponse({ status: 404, description: 'Email not found' })
   @ApiBearerAuth('phono')
   @UseGuards(UserGuard, UserSelfGuard)
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.emailService.remove(id);
+  remove(@Param('id', ParseIntPipe) id: number, @Query('emailId') emailId: number) {
+    return this.emailService.remove(id, emailId);
   }
 }
