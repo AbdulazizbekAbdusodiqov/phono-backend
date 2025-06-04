@@ -58,12 +58,16 @@ export class AddressService {
       where: { id: addressId, user_id: id },
     });
 
+    console.log("address: ->", address);
+
     if (!address) {
       throw new ForbiddenException("You can't delete this address");
     }
 
-    return await this.prisma.address.delete({
+    const result = await this.prisma.address.delete({
       where: { id }, // faqat id kerak, chunki id unique bo'lishi kerak
     });
+    console.log("result: address: ", result);
+    return result
   }
 }
