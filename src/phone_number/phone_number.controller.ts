@@ -107,12 +107,6 @@ export class PhoneNumberController {
     @Param('id', ParseIntPipe) id: number,
     @Query('phoneId') phoneId: number,
   ) {
-    return this.phoneNumberService.reawait instance.delete(`/phone-number/${id}?phoneId=${phone_id}`, {
-      headers: {
-        Authorization: `Bearer ${JSON.parse(
-          localStorage.getItem('accessToken') || '',
-        )}`,
-      },
-    });move(id, phoneId);
+    return this.phoneNumberService.remove(id, phoneId);
   }
 }
