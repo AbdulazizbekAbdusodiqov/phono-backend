@@ -12,7 +12,7 @@ import slugify from "slugify";
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
   async create(createProductDto: CreateProductDto, files: any) {
     try {
       if (createProductDto.user_id) {
@@ -25,7 +25,7 @@ export class ProductService {
         }
       }
 
-      if(createProductDto.model_id == 0){
+      if (createProductDto.model_id == 0) {
         delete createProductDto.model_id
       }
       const newProduct = await this.prisma.product.create({
@@ -203,8 +203,20 @@ export class ProductService {
     });
   }
 
-  async getAllProduct(){
-    return await this.prisma.product.findMany({where:{is_active:true, is_deleted:false}})
+  async getAllProduct() {
+    return await this.prisma.product.findMany({
+      where: {
+        is_active: true,
+        is_deleted: false
+      },
+      include: {
+        product_image: true,
+        brand: true,
+        color: true,
+        currency: true,
+        model: true
+      }
+    })
   }
 
   async getProductByTitleQuery(query: string) {
