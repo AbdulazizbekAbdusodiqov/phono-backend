@@ -203,6 +203,10 @@ export class ProductService {
     });
   }
 
+  async getAllProduct(){
+    return await this.prisma.product.findMany({where:{is_active:true, is_deleted:false}})
+  }
+
   async getProductByTitleQuery(query: string) {
     console.log(query);
     return await this.prisma.product.findMany({

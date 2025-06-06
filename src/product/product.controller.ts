@@ -59,7 +59,7 @@ export class ProductController {
     }
   }
 
-  @ApiOperation({ summary: "Get all products" })
+  @ApiOperation({ summary: "Get all products by query" })
   @ApiQuery({ name: "page", required: false, type: Number })
   @ApiQuery({ name: "limit", required: false, type: Number })
   @ApiQuery({ name: "search", required: false, type: String })
@@ -86,6 +86,12 @@ export class ProductController {
       region,
       condition
     );
+  }
+  
+  @Get("all")
+  @ApiOperation({ summary: "Get all products" })
+  getAllProducts() {
+    return this.productService.getAllProduct();
   }
 
   @ApiOperation({ summary: "Get product by title (query param)" })
