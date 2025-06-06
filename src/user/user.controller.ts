@@ -68,20 +68,20 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
-  @UseGuards(UserGuard, UserSelfGuard)
-  @Put(":id")
-  @ApiOperation({ summary: "Update user by ID" })
-  @ApiBody({ type: UpdateUserDto })
-  @ApiConsumes("multipart/form-data")
-  @ApiResponse({ status: 200, description: "User updated successfully" })
-  @UseInterceptors(FileInterceptor("image", multerOptions))
-  update(
-    @Param("id") id: string,
-    @Body() updateUserDto: UpdateUserDto,
-    @UploadedFile() image: Express.Multer.File
-  ) {
-    return this.userService.update(+id, updateUserDto, image);
-  }
+@UseGuards(UserGuard, UserSelfGuard)
+@Put(":id")
+@ApiOperation({ summary: "Update user by ID" })
+@ApiConsumes("multipart/form-data")
+@ApiResponse({ status: 200, description: "User updated successfully" })
+@UseInterceptors(FileInterceptor("image", multerOptions))
+async update(
+  @Param("id") id: string,
+  @Body() updateUserDto: Record<string, any>, 
+  @UploadedFile() image: Express.Multer.File
+) {
+  return this.userService.update(+id, updateUserDto, image);
+}
+
 
   @UseGuards(AdminGuard)
   @Delete(":id")
