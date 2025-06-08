@@ -24,7 +24,7 @@ export class EmailService {
   }
 
   async findEmailsByUser(id: number) {
-    const email = await this.prismaService.email.findMany ({ where: { id } });
+    const email = await this.prismaService.email.findMany ({ where: { user_id: id } });
     if (!email) {
       throw new NotFoundException(`Email with ID ${id} not found`);
     }
