@@ -40,7 +40,7 @@ export class EmailController {
     @Body() createEmailDto: CreateEmailDto,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.emailService.create(createEmailDto);
+    return this.emailService.createByUser(createEmailDto);
   }
 
   @Get()

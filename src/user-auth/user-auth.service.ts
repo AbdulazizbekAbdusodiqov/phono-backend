@@ -133,7 +133,7 @@ export class UserAuthService {
 
     return {
       data: {
-        id: user.id,
+        id: user.user_id,
         phone_number,
         full_name: `${user.user.first_name} ${user.user.last_name}`,
         accessToken,
