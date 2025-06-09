@@ -2,24 +2,67 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { CreateEmailDto } from './dto/create-email.dto';
 import { UpdateEmailDto } from './dto/update-email.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { Email } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { MailService } from '../mail/mail.service';
+
 
 @Injectable()
 export class EmailService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly mailService: MailService,
+  ) {}
 
   async create(createEmailDto: CreateEmailDto) {
     return await this.prismaService.email.create({ data: createEmailDto });
   }
 
   async createByUser(createEmailDto: CreateEmailDto) {
-    const oldEmail = await this.prismaService.email.findFirst({where: {email: createEmailDto.email}})
-    if(oldEmail && oldEmail.user_id == createEmailDto.user_id){
-      throw new BadRequestException(`This email: ${createEmailDto.email} already has been created for you`); 
-    } else if(oldEmail){
-      throw new BadRequestException(`This email: ${createEmailDto.email} already has been created for other`)
+    const oldEmail = await this.prismaService.email.findFirst({
+      where: { email: createEmailDto.email },
+    });
+    if (oldEmail && oldEmail.user_id == createEmailDto.user_id) {
+      throw new BadRequestException(
+        `This email: ${createEmailDto.email} already has been created for you`,
+      );
+    } else if (oldEmail) {
+      throw new BadRequestException(
+        `This email: ${createEmailDto.email} already has been created for other`,
+      );
     }
 
-    return await this.prismaService.email.create({ data: createEmailDto });
+    const activationLink = uuidv4();
+
+    const newEmail = await this.prismaService.email.create({
+      data: {
+        ...createEmailDto,
+        activation_link: activationLink,
+        is_verified: false, // yangi qo‘shilgan email
+      },
+    });
+
+    await this.mailService.sendEmailActivationLink(newEmail); // bu keyingi bosqichda
+    return newEmail;
+  }
+
+
+  async verifyEmail (link: string){
+    const email = await this.prismaService.email.findFirst({
+      where: { activation_link: link },
+    });
+
+    if (!email) throw new NotFoundException('Invalid activation link');
+
+    await this.prismaService.email.update({
+      where: { id: email.id },
+      data: {
+        is_verified: true,
+        activation_link: null, // bir martalik
+      },
+    });
+
+    return { message: 'Email manzilingiz muvaffaqiyatli tasdiqlandi.' };
   }
 
   async findAll() {

@@ -9,20 +9,30 @@ import {
   ParseIntPipe,
   UseGuards,
   Query,
+  NotFoundException,
 } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { UpdateEmailDto } from './dto/update-email.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { AdminGuard } from '../guards/admin.guard';
 import { AdminSelfGuard } from '../guards/admin-self.guard';
 import { UserGuard } from '../guards/user.guard';
 import { UserSelfGuard } from '../guards/user-self.guard';
+import { PrismaService } from '../prisma/prisma.service';
 
 @ApiTags('Emails')
 @Controller('email')
 export class EmailController {
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new email' })
@@ -41,6 +51,11 @@ export class EmailController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.emailService.createByUser(createEmailDto);
+  }
+
+  @Get('activate/:link')
+  async activateEmail(@Param('link') link: string) {
+    return this.emailService.verifyEmail(link)
   }
 
   @Get()
@@ -91,7 +106,10 @@ export class EmailController {
   @ApiResponse({ status: 404, description: 'Email not found' })
   @ApiBearerAuth('phono')
   @UseGuards(UserGuard, UserSelfGuard)
-  remove(@Param('id', ParseIntPipe) id: number, @Query('emailId') emailId: number) {
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('emailId') emailId: number,
+  ) {
     return this.emailService.remove(id, emailId);
   }
 }
