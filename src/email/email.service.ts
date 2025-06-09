@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { UpdateEmailDto } from './dto/update-email.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -8,6 +8,17 @@ export class EmailService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(createEmailDto: CreateEmailDto) {
+    return await this.prismaService.email.create({ data: createEmailDto });
+  }
+
+  async createByUser(createEmailDto: CreateEmailDto) {
+    const oldEmail = await this.prismaService.email.findFirst({where: {email: createEmailDto.email}})
+    if(oldEmail && oldEmail.user_id == createEmailDto.user_id){
+      throw new BadRequestException(`This email: ${createEmailDto.email} already has been created for you`); 
+    } else if(oldEmail){
+      throw new BadRequestException(`This email: ${createEmailDto.email} already has been created for other`)
+    }
+
     return await this.prismaService.email.create({ data: createEmailDto });
   }
 
@@ -24,7 +35,9 @@ export class EmailService {
   }
 
   async findEmailsByUser(id: number) {
-    const email = await this.prismaService.email.findMany ({ where: { id } });
+    const email = await this.prismaService.email.findMany({
+      where: { user_id: id },
+    });
     if (!email) {
       throw new NotFoundException(`Email with ID ${id} not found`);
     }
@@ -46,7 +59,7 @@ export class EmailService {
       where: { id: emailId, user_id: id },
     });
 
-    console.log("email: ->", email);
+    console.log('email: ->', email);
 
     if (!email) {
       throw new ForbiddenException("You can't delete this email");
@@ -55,7 +68,7 @@ export class EmailService {
     const result = await this.prismaService.email.delete({
       where: { id: emailId }, // faqat id kerak, chunki id unique bo'lishi kerak
     });
-    console.log("result: email: ", result)
+    console.log('result: email: ', result);
     return result;
   }
 }
