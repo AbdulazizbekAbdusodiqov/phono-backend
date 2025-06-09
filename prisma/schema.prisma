@@ -167,6 +167,8 @@ model Email {
   email   String  @unique
   user_id Int
   is_main Boolean @default(false)
+  is_verified     Boolean  @default(false) // yangi qo‘shilgan maydon
+  activation_link String?
   user    User    @relation(fields: [user_id], references: [id])
 
   createdAt DateTime @default(now())
