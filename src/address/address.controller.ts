@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  Req,
   ParseIntPipe,
   Query,
 } from "@nestjs/common";
@@ -25,7 +24,6 @@ import {
 import { UserGuard } from "../guards/user.guard";
 import { GetCurrentUserId } from "../decorators/get-current-user-id.decorator";
 import { UserSelfGuard } from "../guards/user-self.guard";
-import { Request } from "express";
 import { FindAddressDto } from "./dto/findAddress.dto";
 
 @ApiTags('Address')
@@ -64,11 +62,12 @@ export class AddressController {
   @UseGuards(UserGuard)
   @Post("getByUser/:user_id")
   @ApiOperation({ summary: "Get address by region, district and user" })
+  @ApiParam({ name: 'user_id', type: Number, description: 'User ID' })
   @ApiBody({ type: FindAddressDto })
   @ApiResponse({ status: 200, description: "Address found." })
   @ApiResponse({ status: 404, description: "Address not found." })
-  findAddressByRegionDistrictAndUser(@Req() req: Request, @Body() findAddressDto: FindAddressDto) {
-    return this.addressService.findAddressByRegionIdAndDistrictId(req.user.id, findAddressDto);
+  findAddressByRegionDistrictAndUser(@Param('user_id', ParseIntPipe) user_id: number, @Body() findAddressDto: FindAddressDto,) {
+    return this.addressService.findAddressByRegionIdAndDistrictId(user_id, findAddressDto);
   }
 
   @UseGuards(UserGuard, UserSelfGuard)
