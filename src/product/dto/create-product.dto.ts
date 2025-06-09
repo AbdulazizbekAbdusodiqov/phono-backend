@@ -99,10 +99,9 @@ export class CreateProductDto {
   phone_number: string;
 
   @ApiProperty({ required: false })
-  @IsNumber()
   @IsOptional()
-  @Type(() => Number)
-  address_id?: number;
+  @Type(() => String)
+  address_id?: string;
 
   @ApiProperty({
     type: "array",

@@ -32,7 +32,7 @@ export class ProductController {
   @ApiOperation({ summary: "Create new product" })
   @ApiBearerAuth("phono")
   // @UseGuards(UserGuard)
-  @Post()
+  @Post("create")
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(
     FileFieldsInterceptor([{ name: "images", maxCount: 10 }], multerOptions)
@@ -47,6 +47,8 @@ export class ProductController {
     try {
       return await this.productService.create(createProductDto, files);
     } catch (error) {
+      console.log(error);
+      
       // Handle Prisma foreign key constraint errors
       if (error.code === "P2003") {
         throw new BadRequestException(
