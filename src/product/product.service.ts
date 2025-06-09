@@ -14,22 +14,41 @@ import slugify from "slugify";
 export class ProductService {
   constructor(private readonly prisma: PrismaService) { }
   async create(createProductDto: CreateProductDto, files: any) {
+    console.log("hellomaleykum");
+    
     try {
-      if (createProductDto.user_id) {
-        const userExists = await this.prisma.user.findUnique({
-          where: { id: createProductDto.user_id },
-        });
-
-        if (!userExists) {
-          throw new NotFoundException(`User with ID ${createProductDto.user_id} does not exist`);
-        }
-      }
-
-      if (createProductDto.model_id == 0) {
-        delete createProductDto.model_id
+      if (createProductDto.model_id === 0) {
+        delete createProductDto.model_id;
       }
       const newProduct = await this.prisma.product.create({
-        data: createProductDto,
+        data: {
+          title: createProductDto.title,
+          storage: createProductDto.storage,
+          ram: createProductDto.ram,
+          user: createProductDto.user_id ? { connect: { id: +createProductDto.user_id } } : undefined,
+          brand: { connect: { id: +createProductDto.brand_id } },
+          model: createProductDto.model_id ? { connect: { id: +createProductDto.model_id } } : undefined,
+          color: { connect: { id: +createProductDto.color_id } },
+          currency: { connect: { id: +createProductDto.currency_id } },
+          address: +createProductDto.address_id ? { connect: { id: +createProductDto.address_id } } : undefined,
+          price: createProductDto.price,
+          description: createProductDto.description,
+          year: createProductDto.year,
+          negotiable: createProductDto.negotiable,
+          condition: createProductDto.condition,
+          has_document: createProductDto.has_document,
+          phone_number: createProductDto.phone_number,
+          other_model: createProductDto.other_model,
+          is_deleted: false
+        },
+        include: {
+          user: true,
+          brand: true,
+          model: true,
+          color: true,
+          currency: true,
+          address: true
+        }
       });
       console.log("hellomaleykum2");
       const slug = slugify(`${newProduct.title} ${newProduct.id}`, {
@@ -69,6 +88,8 @@ export class ProductService {
 
       return { product: updatedProduct, productImages: newProductImages };
     } catch (error) {
+      console.log(error);
+      
       throw error;
     }
   }
@@ -254,9 +275,18 @@ export class ProductService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
+    const data = {
+      ...updateProductDto,
+      address_id: updateProductDto.address_id ? +updateProductDto.address_id : undefined,
+    };
+    for (const key in data) {
+      if (data[key] === undefined) {
+        delete data[key];
+      }
+    }
     return await this.prisma.product.update({
       where: { id, is_deleted: false },
-      data: updateProductDto,
+      data,
     });
   }
 
