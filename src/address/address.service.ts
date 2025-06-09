@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateAddressDto } from "./dto/create-address.dto";
+import { FindAddressDto } from "./dto/findAddress.dto";
 import { UpdateAddressDto } from "./dto/update-address.dto";
 import { PrismaService } from "../prisma/prisma.service";
 
@@ -23,12 +24,16 @@ export class AddressService {
     });
   }
 
-  async findAddressByRegionIdAndDistrictId(region_id: number, district_id: number,user_id:number) {
+  async findAddressByRegionIdAndDistrictId(user_id: number, findAddressDto: FindAddressDto) {
     const address = await this.prisma.address.findFirst({
-      where: {   region_id, district_id, user_id  },
+      where: { 
+        region_id: findAddressDto.region_id, 
+        district_id: findAddressDto.district_id, 
+        user_id 
+      },
     });
     if(!address){
-      throw new NotFoundException(`Address not found`);
+      return await this.create({...findAddressDto, user_id, name: "", address: "", is_main: false, });
     }
     return address;
   }

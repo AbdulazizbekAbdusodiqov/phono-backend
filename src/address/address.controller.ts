@@ -26,6 +26,7 @@ import { UserGuard } from "../guards/user.guard";
 import { GetCurrentUserId } from "../decorators/get-current-user-id.decorator";
 import { UserSelfGuard } from "../guards/user-self.guard";
 import { Request } from "express";
+import { FindAddressDto } from "./dto/findAddress.dto";
 
 @ApiTags('Address')
 @ApiBearerAuth('phono')
@@ -60,23 +61,14 @@ export class AddressController {
     return this.addressService.findOne(+id);
   }
 
-  @Get("region/:region_id/district/:district_id/user/:user_id")
+  @UseGuards(UserGuard)
+  @Post("getByUser/:user_id")
   @ApiOperation({ summary: "Get address by region, district and user" })
-  @ApiParam({ name: "region_id", type: Number, description: "Region ID" })
-  @ApiParam({ name: "district_id", type: Number, description: "District ID" })
-  @ApiParam({ name: "user_id", type: Number, description: "User ID" })
+  @ApiBody({ type: FindAddressDto })
   @ApiResponse({ status: 200, description: "Address found." })
   @ApiResponse({ status: 404, description: "Address not found." })
-  findAddressByRegionDistrictAndUser(
-    @Param("region_id") region_id: string,
-    @Param("district_id") district_id: string,
-    @Param("user_id") user_id: string
-  ) {
-    return this.addressService.findAddressByRegionIdAndDistrictId(
-      +region_id,
-      +district_id,
-      +user_id
-    );
+  findAddressByRegionDistrictAndUser(@Req() req: Request, @Body() findAddressDto: FindAddressDto) {
+    return this.addressService.findAddressByRegionIdAndDistrictId(req.user.id, findAddressDto);
   }
 
   @UseGuards(UserGuard, UserSelfGuard)
