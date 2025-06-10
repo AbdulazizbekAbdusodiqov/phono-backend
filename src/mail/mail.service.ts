@@ -41,7 +41,7 @@ export class MailService {
       subject: `PHONO-TECH: Email manzilingizni tasdiqlang`,
       template: './confirm', // .hbs fayl bo'lishi kerak
       context: {
-        email: email.email,
+        name: email.email,
         url,
       },
     });
