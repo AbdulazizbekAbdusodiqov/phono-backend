@@ -37,7 +37,7 @@ export class MailService {
     await this.mailerService.sendMail({
       to: email.email,
       subject: `PHONO-TECH: Email manzilingizni tasdiqlang`,
-      template: './confirm-email', // .hbs fayl bo'lishi kerak
+      template: './confirm', // .hbs fayl bo'lishi kerak
       context: {
         email: email.email,
         url,
