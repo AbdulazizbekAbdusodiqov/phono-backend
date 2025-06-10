@@ -34,7 +34,9 @@ export class MailService {
   // email.service.ts
   async sendEmailActivationLink(email: Email) {
     const url = `${process.env.API_URL}/api/email/activate/${email.activation_link}`;
-    await this.mailerService.sendMail({
+    console.log('mail.service: email: ', email);
+    console.log('mail.service: url: ', url);
+    const result = await this.mailerService.sendMail({
       to: email.email,
       subject: `PHONO-TECH: Email manzilingizni tasdiqlang`,
       template: './confirm', // .hbs fayl bo'lishi kerak
@@ -43,5 +45,6 @@ export class MailService {
         url,
       },
     });
+    console.log('mail.service: result: ', result);
   }
 }
