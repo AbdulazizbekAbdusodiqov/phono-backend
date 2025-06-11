@@ -275,19 +275,26 @@ export class ProductService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
-    const data = {
-      ...updateProductDto,
-      address_id: updateProductDto.address_id ? +updateProductDto.address_id : undefined,
-    };
-    for (const key in data) {
-      if (data[key] === undefined) {
-        delete data[key];
+    try{
+      console.log(updateProductDto);
+      
+      const data = {
+        ...updateProductDto,
+        address_id: +updateProductDto.address_id 
+      };
+      for (const key in data) {
+        if (data[key] === undefined || data[key] == 0 ) {
+          delete data[key];
+        }
       }
+      return await this.prisma.product.update({
+        where: {id},
+        data,
+      });
+    }catch(e){
+      console.log(e);
+      throw new Error(e.message)
     }
-    return await this.prisma.product.update({
-      where: { id, is_deleted: false },
-      data,
-    });
   }
 
   async remove(id: number) {
