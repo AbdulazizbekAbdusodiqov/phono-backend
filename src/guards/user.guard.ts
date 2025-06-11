@@ -16,13 +16,11 @@ export class UserGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const req = context.switchToHttp().getRequest();
     const authHeader = req.headers.authorization;
-    console.log("keldi: ", authHeader);
     if (!authHeader) {
       throw new UnauthorizedException("Unauthorizard1 user");
     }
     const bearer = authHeader.split(" ")[0];
     const token = authHeader.split(" ")[1];
-    console.log('keldi1: ', token);
     
     if (bearer != "Bearer" || !token) {
       throw new UnauthorizedException("Unauthorizard2 user");

@@ -62,7 +62,6 @@ export class AddressService {
       where: { id: addressId, user_id: id },
     });
 
-    console.log("address: ->", address);
 
     if (!address) {
       throw new ForbiddenException("You can't delete this address");
@@ -71,7 +70,6 @@ export class AddressService {
     const result = await this.prisma.address.delete({
       where: { id: addressId }, // faqat id kerak, chunki id unique bo'lishi kerak
     });
-    console.log("result: address: ", result);
     return result
   }
 }
