@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException, NotFoundException, Param } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 type RequestWithUser = {
@@ -16,12 +16,14 @@ export class UserProductGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const req = context.switchToHttp().getRequest<RequestWithUser>();
-        console.log(req.params.id);
+        
+        console.log(req.params);
         
         const product = await this.prismaService.product.findUnique({
             where: { id: Number(req.params.id) },
             include: { user: true }
         });
+        console.log(product);
         
         if (!product) {
             throw new NotFoundException('Product not found');
