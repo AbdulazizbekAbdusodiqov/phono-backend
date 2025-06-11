@@ -269,6 +269,8 @@ export class ProductService {
   }
 
   async deleteProductImage(id: number) {
+    console.log("hiiiiiiiii");
+    
     return await this.prisma.productImage.delete({
       where: { id },
     });

@@ -183,10 +183,10 @@ export class ProductController {
 
   @ApiOperation({ summary: "Delete product image" })
   @ApiBearerAuth("phono")
-  @UseGuards(UserProductGuard)
-  @UseGuards(UserGuard)
-  @Delete("image/:id")
-  deleteProductImage(@Param("id") id: number) {
+  @UseGuards(UserGuard,UserProductGuard)
+  @Delete("/:id/image/:imageId")
+  deleteProductImage(@Param("imageId") id: number) {
+    console.log();
     return this.productService.deleteProductImage(+id);
   }
 
