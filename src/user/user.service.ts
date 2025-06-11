@@ -76,8 +76,20 @@ export class UserService {
   async findOne(id: number) {
     return await this.prisma.user.findUnique({
       where: { id },
-      include: { phone_number: true, address: true, email: true, product:{ include:{product_image:true, brand:true, model:true, color:true,currency:true}} },
-
+      include: {
+        phone_number: true,
+        address: true,
+        email: true,
+        product: {
+          include: {
+            product_image: true,
+            brand: true,
+            model: true,
+            color: true,
+            currency: true,
+          },
+        },
+      },
     });
   }
 
@@ -92,19 +104,19 @@ export class UserService {
   ) {
     const data: any = {};
 
-    if (updateUserDto.first_name) {
+    if (updateUserDto?.first_name) {
       data.first_name = updateUserDto.first_name;
     }
 
-    if (updateUserDto.last_name) {
+    if (updateUserDto?.last_name) {
       data.last_name = updateUserDto.last_name;
     }
 
-    if (updateUserDto.brith_date) {
+    if (updateUserDto?.brith_date) {
       data.birth_date = updateUserDto.brith_date;
     }
 
-    if (updateUserDto.password) {
+    if (updateUserDto?.password) {
       data.password = await BcryptEncryption.encrypt(updateUserDto.password);
     }
 
