@@ -54,7 +54,6 @@ export class PhoneNumberService {
       where: { id: phoneId, user_id: id },
     });
 
-    console.log("phone: ->", phone);
 
     if (!phone) {
       throw new ForbiddenException("You can't delete this phone number");
@@ -64,7 +63,6 @@ export class PhoneNumberService {
       where: { id: phoneId }, // faqat id kerak, chunki id unique bo'lishi kerak
     });
 
-    console.log("result: phone_number: ", result);
 
     return result
   }

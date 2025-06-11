@@ -29,6 +29,34 @@ import { UserSelfGuard } from "../guards/user-self.guard";
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  
+  @ApiOperation({ summary: "Create product image" })
+  @ApiBearerAuth("phono")
+  @Post('image/:id')
+  @UseGuards(UserGuard, UserProductGuard )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('image', multerOptions))
+  createProductImage(
+    @Param('id') id: number,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    console.log("testing");
+    
+    return this.productService.createProductImage(+id, image);
+  }
+
+  
   @ApiOperation({ summary: "Create new product" })
   @ApiBearerAuth("phono")
   // @UseGuards(UserGuard)
@@ -141,6 +169,8 @@ export class ProductController {
     return this.productService.rejectProduct(+id);
   }
 
+ 
+
   @ApiOperation({ summary: "Update product" })
   @ApiBearerAuth("phono")
   @UseGuards(UserProductGuard)
@@ -150,28 +180,6 @@ export class ProductController {
     return this.productService.update(+id, updateProductDto);
   }
   
- @ApiOperation({ summary: "Create product image" })
-  @Post('image/:id')
-  @UseGuards(UserProductGuard, UserGuard)
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        image: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
-  })
-  @UseInterceptors(FileInterceptor('image', multerOptions))
-  createProductImage(
-    @Param('id') id: number,
-    @UploadedFile() image: Express.Multer.File,
-  ) {
-    return this.productService.createProductImage(+id, image);
-  }
 
   @ApiOperation({ summary: "Delete product image" })
   @ApiBearerAuth("phono")

@@ -14,7 +14,6 @@ import slugify from "slugify";
 export class ProductService {
   constructor(private readonly prisma: PrismaService) { }
   async create(createProductDto: CreateProductDto, files: any) {
-    console.log("hellomaleykum");
     
     try {
       if (createProductDto.model_id === 0) {
@@ -50,7 +49,6 @@ export class ProductService {
           address: true
         }
       });
-      console.log("hellomaleykum2");
       const slug = slugify(`${newProduct.title} ${newProduct.id}`, {
         lower: true,
         replacement: "-",
@@ -260,6 +258,8 @@ export class ProductService {
   }
 
   async createProductImage(id: number, image: Express.Multer.File) {
+    console.log("testing");
+    
     return await this.prisma.productImage.create({
       data: {
         product_id: id,
