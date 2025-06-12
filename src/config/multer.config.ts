@@ -8,7 +8,6 @@ export const multerOptions = {
       const fileExtName = path.extname(file.originalname);
       const randomName = Math.random().toString(36).substring(2, 15);
       callback(null, `${randomName}${fileExtName}`);
-      console.log(file);
 
     },
   }),

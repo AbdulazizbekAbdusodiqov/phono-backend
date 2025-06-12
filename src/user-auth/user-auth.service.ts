@@ -130,7 +130,7 @@ export class UserAuthService {
       maxAge: 15 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
-
+    console.log(user.user.id)
     return {
       data: {
         id: user.user_id,

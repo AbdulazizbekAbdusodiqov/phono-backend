@@ -133,10 +133,11 @@ export class ChatroomResolver {
   @Mutation(() => Chatroom)
   async createChatroom(
     @Args('name') name: string,
+    @Args('ids') id: number,
     @Context() context: { req: Request },
   ) {
     if (context.req.user?.id)
-      return this.chatroomService.createChatroom(name, context.req.user.id);
+      return this.chatroomService.createChatroom(name, [context.req.user?.id, id]);
     return null;
   }
 
