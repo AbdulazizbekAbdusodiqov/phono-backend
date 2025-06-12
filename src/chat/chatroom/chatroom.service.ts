@@ -18,30 +18,60 @@ export class ChatroomService {
     });
   }
 
-  async createChatroom(name: string, id: number) {
+  async createChatroom(name: string, userIds: number[]) {
     const existingChatroom = await this.prisma.chatroom.findFirst({
       where: {
-        users: {
-          some: {
-            id: id,
+        AND: [
+          {
+            users: {
+              every: {
+                id: {
+                  in: userIds,
+                },
+              },
+            },
           },
-        },
+          {
+            users: {
+              some: {
+                id: userIds[0],
+              },
+            },
+          },
+          {
+            users: {
+              some: {
+                id: userIds[1],
+              },
+            },
+          },
+          {
+            users: {
+              none: {
+                id: {
+                  notIn: userIds,
+                },
+              },
+            },
+          },
+        ],
       },
     });
+
     if (existingChatroom) {
-      throw new BadRequestException({ name: 'Chatroom already exists for this user' });
+      throw new BadRequestException({ name: 'Chatroom already exists between these users' });
     }
+
     return this.prisma.chatroom.create({
       data: {
         name,
         users: {
-          connect: {
-            id: id,
-          },
+          connect: userIds.map((id) => ({ id })),
         },
       },
     });
   }
+
 
   async addUsersToChatroom(chatroomId: number, userIds: number[]) {
     const existingChatroom = await this.prisma.chatroom.findUnique({
