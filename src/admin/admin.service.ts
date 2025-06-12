@@ -19,7 +19,6 @@ export class AdminService {
 
     async create(createAdminDto: CreateAdminDto) {
         const { password, confirm_password, ...data } = createAdminDto;
-        console.log(password, confirm_password);
         
         if (password !== confirm_password) {
             throw new BadRequestException("Passwords did not match");
