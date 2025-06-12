@@ -33,7 +33,7 @@ model User {
   profile_img          String?
   is_active            Boolean         @default(true)
   is_premium           Boolean         @default(false)
-  birth_date           DateTime?
+  birth_date           String?
   hashed_refresh_token String?
   last_online          DateTime        @default(now())
   balance              Decimal         @default(0)
