@@ -8,7 +8,7 @@ export class ChatroomService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   async getChatroom(id: string) {
     return this.prisma.chatroom.findUnique({
@@ -21,11 +21,15 @@ export class ChatroomService {
   async createChatroom(name: string, id: number) {
     const existingChatroom = await this.prisma.chatroom.findFirst({
       where: {
-        name,
+        users: {
+          some: {
+            id: id,
+          },
+        },
       },
     });
     if (existingChatroom) {
-      throw new BadRequestException({ name: 'Chatroom already exists' });
+      throw new BadRequestException({ name: 'Chatroom already exists for this user' });
     }
     return this.prisma.chatroom.create({
       data: {
