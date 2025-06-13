@@ -59,10 +59,10 @@ export class ChatroomService {
     });
 
     if (existingChatroom) {
-      throw new BadRequestException({ name: 'Chatroom already exists between these users' });
+      return existingChatroom
     }
 
-    return this.prisma.chatroom.create({
+    return await this.prisma.chatroom.create({
       data: {
         name,
         users: {
