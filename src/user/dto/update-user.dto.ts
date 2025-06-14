@@ -14,8 +14,7 @@ export class UpdateUserDto {
 
   @ApiPropertyOptional({
     description: "Birth date of the user in ISO format",
-    type: String,
-    format: "date-time",
+    type: String
   })
   @IsOptional()
   birth_date?: string;
