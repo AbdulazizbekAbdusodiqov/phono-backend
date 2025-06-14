@@ -1,7 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createWriteStream } from 'fs';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Message } from './chatroom.types';
 
 @Injectable()
 export class ChatroomService {
@@ -145,6 +146,13 @@ export class ChatroomService {
       },
     });
   }
+
+  async deleteMessage(messageId: number): Promise<Number> {
+  const msg = await this.prisma.message.findUnique({ where: { id: messageId } });
+  if (!msg) throw new NotFoundException('Message not found');
+  await this.prisma.message.delete({ where: { id: messageId } });
+  return msg.id;
+}
 
   async saveImage(image: {
     createReadStream: () => any;

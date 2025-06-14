@@ -30,6 +30,7 @@ type Mutation {
   addUsersToChatroom(chatroomId: Float!, userIds: [Float!]!): Chatroom!
   createChatroom(id: Int!, name: String!): Chatroom!
   deleteChatroom(chatroomId: Float!): String!
+  deleteMessage(chatroomId: Int!, messageId: Int!): Float!
   enterChatroom(chatroomId: Float!): Boolean!
   leaveChatroom(chatroomId: Float!): Boolean!
   sendMessage(chatroomId: Float!, content: String!, image: Upload): Message!
@@ -48,6 +49,7 @@ type Query {
 
 type Subscription {
   liveUsersInChatroom(chatroomId: Float!): [User!]
+  messageDeleted(chatroomId: Int!): Message!
   newMessage(chatroomId: Float!): Message
   userStartedTyping(chatroomId: Float!, userId: Float!): User
   userStoppedTyping(chatroomId: Float!, userId: Float!): User
