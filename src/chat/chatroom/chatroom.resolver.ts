@@ -65,6 +65,13 @@ export class ChatroomResolver {
     return this.pubSub.asyncIterableIterator(`userStoppedTyping.${chatroomId}`);
   }
 
+  @Subscription(() => Message, {
+    resolve: payload => payload.messageDeleted,
+  })
+  messageDeleted(@Args('chatroomId', { type: () => Int }) chatroomId: number) {
+    return this.pubSub.asyncIterableIterator(`messageDeleted.${chatroomId}`);
+  }
+
   @UseFilters(GraphQLErrorFilter)
   @UseGuards(GraphqlAuthGuard)
   @Mutation((returns) => User)
@@ -128,6 +135,21 @@ export class ChatroomResolver {
       });
     return newMessage;
   }
+
+  @UseFilters(GraphQLErrorFilter)
+  @UseGuards(GraphqlAuthGuard)
+  @Mutation(() => Number)
+  async deleteMessage(
+    @Args('chatroomId', { type: () => Int }) chatroomId: number,
+    @Args('messageId', { type: () => Int }) messageId: number,
+  ): Promise<Number> {
+    const deleted = await this.chatroomService.deleteMessage(messageId);
+    await this.pubSub.publish(`messageDeleted.${chatroomId}`, {
+      messageDeleted: deleted,
+    });
+    return deleted;
+  }
+
 
   @UseFilters(GraphQLErrorFilter)
   @UseGuards(GraphqlAuthGuard)
