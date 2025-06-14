@@ -33,7 +33,7 @@ async function start() {
     // app.useGlobalFilters(new AllExceptionsFilter());
 
     app.enableCors({
-      origin: ["http://localhost:3000", "https://phono-front.vercel.app","http://3.72.21.103:3000", "https://www.phone-tech.uz", "https://phone-tech.uz"],
+      origin: ["http://localhost:3000", "https://phono-front.vercel.app", "http://3.72.21.103:3000", "https://www.phone-tech.uz", "https://phone-tech.uz"],
       allowedHeaders: [
         "Accept",
         "Authorization",
@@ -69,6 +69,10 @@ async function start() {
 
     app.useStaticAssets(join(__dirname, "..", "public", "uploads"), {
       prefix: "/api/uploads/",
+    });
+
+    app.useStaticAssets(join(__dirname, "..", "public", "images"), {
+      prefix: "/api/images/",
     });
 
     app.use(bodyParser.json({ limit: "50mb" }));
