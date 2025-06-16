@@ -17,7 +17,7 @@ export class UpdateUserDto {
     type: String
   })
   @IsOptional()
-  brith_date?: string;
+  birth_date?: string;
 
   @ApiPropertyOptional({ description: "Password for the user account" })
   @IsOptional()

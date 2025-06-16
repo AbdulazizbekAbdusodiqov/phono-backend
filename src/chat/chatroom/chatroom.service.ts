@@ -1,14 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createWriteStream } from 'fs';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Message } from './chatroom.types';
 
 @Injectable()
 export class ChatroomService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   async getChatroom(id: string) {
     return this.prisma.chatroom.findUnique({
@@ -18,26 +19,60 @@ export class ChatroomService {
     });
   }
 
-  async createChatroom(name: string, id: number) {
+  async createChatroom(name: string, userIds: number[]) {
     const existingChatroom = await this.prisma.chatroom.findFirst({
       where: {
-        name,
+        AND: [
+          {
+            users: {
+              every: {
+                id: {
+                  in: userIds,
+                },
+              },
+            },
+          },
+          {
+            users: {
+              some: {
+                id: userIds[0],
+              },
+            },
+          },
+          {
+            users: {
+              some: {
+                id: userIds[1],
+              },
+            },
+          },
+          {
+            users: {
+              none: {
+                id: {
+                  notIn: userIds,
+                },
+              },
+            },
+          },
+        ],
       },
     });
+
     if (existingChatroom) {
-      throw new BadRequestException({ name: 'Chatroom already exists' });
+      return existingChatroom
     }
-    return this.prisma.chatroom.create({
+
+    return await this.prisma.chatroom.create({
       data: {
         name,
         users: {
-          connect: {
-            id: id,
-          },
+          connect: userIds.map((id) => ({ id })),
         },
       },
     });
   }
+
 
   async addUsersToChatroom(chatroomId: number, userIds: number[]) {
     const existingChatroom = await this.prisma.chatroom.findUnique({
@@ -111,6 +146,13 @@ export class ChatroomService {
       },
     });
   }
+
+  async deleteMessage(messageId: number): Promise<Number> {
+  const msg = await this.prisma.message.findUnique({ where: { id: messageId } });
+  if (!msg) throw new NotFoundException('Message not found');
+  await this.prisma.message.delete({ where: { id: messageId } });
+  return msg.id;
+}
 
   async saveImage(image: {
     createReadStream: () => any;

@@ -1,6 +1,7 @@
 import {
   Args,
   Context,
+  Int,
   Mutation,
   Query,
   Resolver,
@@ -62,6 +63,13 @@ export class ChatroomResolver {
     @Args('userId') userId: number,
   ) {
     return this.pubSub.asyncIterableIterator(`userStoppedTyping.${chatroomId}`);
+  }
+
+  @Subscription(() => Message, {
+    resolve: payload => payload.messageDeleted,
+  })
+  messageDeleted(@Args('chatroomId', { type: () => Int }) chatroomId: number) {
+    return this.pubSub.asyncIterableIterator(`messageDeleted.${chatroomId}`);
   }
 
   @UseFilters(GraphQLErrorFilter)
@@ -130,13 +138,29 @@ export class ChatroomResolver {
 
   @UseFilters(GraphQLErrorFilter)
   @UseGuards(GraphqlAuthGuard)
+  @Mutation(() => Number)
+  async deleteMessage(
+    @Args('chatroomId', { type: () => Int }) chatroomId: number,
+    @Args('messageId', { type: () => Int }) messageId: number,
+  ): Promise<Number> {
+    const deleted = await this.chatroomService.deleteMessage(messageId);
+    await this.pubSub.publish(`messageDeleted.${chatroomId}`, {
+      messageDeleted: deleted,
+    });
+    return deleted;
+  }
+
+
+  @UseFilters(GraphQLErrorFilter)
+  @UseGuards(GraphqlAuthGuard)
   @Mutation(() => Chatroom)
   async createChatroom(
     @Args('name') name: string,
+    @Args('id', { type: () => Int }) id: number,
     @Context() context: { req: Request },
   ) {
     if (context.req.user?.id)
-      return this.chatroomService.createChatroom(name, context.req.user.id);
+      return await this.chatroomService.createChatroom(`${name} ${context.req.user?.id}`, [context.req.user?.id, id]);
     return null;
   }
 

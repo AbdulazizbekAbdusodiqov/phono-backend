@@ -1,7 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { ValidationPipe } from "@nestjs/common";
+import { RequestMethod, ValidationPipe } from "@nestjs/common";
 import * as cookieParser from "cookie-parser";
 import { WinstonModule } from "nest-winston";
 import { winstonConfig } from "./logger/winston-logger";
@@ -30,7 +30,6 @@ async function start() {
         forbidNonWhitelisted: true,
       })
     );
-    app.useGlobalFilters(new AllExceptionsFilter());
   app.enableCors({
     origin: "*",
     methods: 'GET,PUT,PATCH,POST,DELETE',
@@ -50,9 +49,11 @@ async function start() {
     //   methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
     //   credentials: true,
     // });
+    // app.useGlobalFilters(new AllExceptionsFilter());
+
     app.use(
       "/graphql",
-      graphqlUploadExpress({ maxFileSize: 10000000000, maxFiles: 1 })
+      graphqlUploadExpress({ maxFileSize: 50_000_000, maxFiles: 1 })
     );
 
     const config = new DocumentBuilder()
@@ -71,10 +72,12 @@ async function start() {
       )
       .build();
 
-    app.setGlobalPrefix("api");
-
     app.useStaticAssets(join(__dirname, "..", "public", "uploads"), {
       prefix: "/api/uploads/",
+    });
+
+    app.useStaticAssets(join(__dirname, "..", "public", "images"), {
+      prefix: "/api/images/",
     });
 
     app.use(bodyParser.json({ limit: "50mb" }));

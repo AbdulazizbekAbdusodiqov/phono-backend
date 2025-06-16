@@ -112,8 +112,8 @@ export class UserService {
       data.last_name = updateUserDto.last_name;
     }
 
-    if (updateUserDto?.brith_date) {
-      data.birth_date = updateUserDto.brith_date;
+    if (updateUserDto?.birth_date) {
+      data.birth_date = updateUserDto.birth_date;
     }
 
     if (updateUserDto?.password) {
