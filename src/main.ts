@@ -30,25 +30,25 @@ async function start() {
         forbidNonWhitelisted: true,
       })
     );
-  app.enableCors({
-    origin: "*",
-    methods: 'GET,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
-    credentials: true,
-  });
+  // app.enableCors({
+  //   origin: "*",
+  //   methods: 'GET,PUT,PATCH,POST,DELETE',
+  //   allowedHeaders: 'Content-Type, Authorization',
+  //   credentials: true,
+  // });
 
-    // app.enableCors({
-    //   origin: ["http://localhost:3000", "https://phono-front.vercel.app","http://3.72.21.103:3000", "https://www.phone-tech.uz", "https://phone-tech.uz"],
-    //   allowedHeaders: [
-    //     "Accept",
-    //     "Authorization",
-    //     "Content-Type",
-    //     "X-Requested-With",
-    //     "apollo-require-preflight",
-    //   ],
-    //   methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
-    //   credentials: true,
-    // });
+    app.enableCors({
+      origin: ["http://localhost:3000", "https://phono-front.vercel.app","http://3.72.21.103:3000", "https://www.phone-tech.uz", "https://phone-tech.uz"],
+      allowedHeaders: [
+        "Accept",
+        "Authorization",
+        "Content-Type",
+        "X-Requested-With",
+        "apollo-require-preflight",
+      ],
+      methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
+      credentials: true,
+    });
     // app.useGlobalFilters(new AllExceptionsFilter());
 
     app.use(
