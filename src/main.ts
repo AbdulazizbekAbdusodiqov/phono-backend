@@ -76,6 +76,9 @@ async function start() {
     app.useStaticAssets(join(__dirname, "..", "public", "uploads"), {
       prefix: "/api/uploads/",
     });
+    app.useStaticAssets(join(__dirname, "..", "public", "images"), {
+      prefix: "/api/images/",
+    });
 
     app.use(bodyParser.json({ limit: "50mb" }));
     app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
